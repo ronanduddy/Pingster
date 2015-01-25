@@ -14,7 +14,7 @@
                 </div>
             <?php endif; ?>
             <div class="thumbnail" style="background-color: #e8535d">
-                <img class="margin" alt="..." src="/pingster/img/pingster.png" />
+                <?php echo $this->Html->image('pingster.png'); ?>                
             </div>
             The Ping world awaits you...
         </div>

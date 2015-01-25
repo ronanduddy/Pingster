@@ -1,4 +1,4 @@
-<?php //debug($data);     ?>
+<?php //debug($data);      ?>
 <div class="col-lg-3">
     <div class="box box-primary" id="content">
         <div class="box-header">
@@ -14,7 +14,7 @@
                 </div>
             <?php endif; ?>
             <div class="thumbnail" style="background-color: #e8535d">
-                <img class="margin" alt="..." src="/pingster/img/pingster.png" />
+                <?php echo $this->Html->image('pingster.png'); ?>
             </div>
             The Ping world awaits you...
         </div>
