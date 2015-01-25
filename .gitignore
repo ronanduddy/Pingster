@@ -1,0 +1,5 @@
+Config/core.php
+Config/database.php
+Plugin/Amazonsdk/Config/amazon.php
+tmp/*
+!empty
