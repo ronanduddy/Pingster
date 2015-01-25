@@ -74,7 +74,7 @@ class CommentsController extends AppController {
             $this->Comment->Project->Asset->create();
 
             //if asset being uploaded
-            if (!empty($this->request->data && $this->request->data['Asset']['asset']['size'] != 0)) {
+            if (!empty($this->request->data) && $this->request->data['Asset']['asset']['size'] != 0) {
 
                 // tmp vars as request data will be nulled
                 $tmp_name = $this->request->data['Asset']['asset']['tmp_name'];
