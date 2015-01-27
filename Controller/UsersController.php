@@ -41,7 +41,6 @@ class UsersController extends AppController {
 
         $this->loadModel('Assets');
         //$this->set('assets', $this->Assets->findByUserId($id));
-
         // getting comments
         $this->Paginator->settings = array(
             'conditions' => array('Assets.user_id' => $id),
@@ -213,7 +212,7 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             // authenticate user
             if ($this->Auth->login()) {
-                return $this->redirect($this->Auth->redirect());
+                return $this->redirect($this->redirect($this->dashboard));
             } else {
                 $this->Session->setFlash('Sorry, invalid username or password. Please try again :)', 'Flashes/danger');
                 return false;

@@ -92,7 +92,7 @@ class AppController extends Controller {
         //$this->Security->blackHoleCallback = 'forceSSL';
         //$this->Security->requireSecure();
         $this->Security->requireAuth();
-
+        $this->Auth->autoRedirect = false;
         // all login, register and display actions to all
         $this->Auth->allow('display', 'login', 'register');
 
