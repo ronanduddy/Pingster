@@ -3,7 +3,6 @@
 echo $this->Html->css(
         array(
             'AdminLTE',
-            'bootstrap.min',
             'ionicons.min',
             'font-awesome.min',
         //'generic'
@@ -14,7 +13,7 @@ echo $this->fetch('meta');
 echo $this->fetch('css');
 echo $this->fetch('script');
 ?>
-
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 <meta name="robots" content="noindex, nofollow">
 <meta name="robots" content="noimageindex">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">

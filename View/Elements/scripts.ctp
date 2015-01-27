@@ -1,10 +1,10 @@
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js" type="text/javascript"></script>
 <?php
 // list of scripts to include in page footer
 echo $this->Html->script(
         array(
-            'bootstrap.min',
-            'jquery-ui-1.10.3.min',
             'AdminLTE/app.js',
 //            'plugins/input-mask/jquery.inputmask.numeric.extensions',
 //            'plugins/input-mask/jquery.inputmask',
