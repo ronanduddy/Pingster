@@ -33,7 +33,6 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller {
 
     public $s3_bucket = 'pingsterdev';
-    
     // this is for all controllers to have access to the dashboard url:
     public $dashboard = array('controller' => 'users', 'action' => 'dashboard');
     public $helpers = array(
@@ -83,16 +82,16 @@ class AppController extends Controller {
     );
 
     // security component handler
-    public function blackhole($type) {
-        //echo $type;
+    public function forceSSL() {
+        return $this->redirect('https://' . env('SERVER_NAME') . $this->here);
     }
 
     // This callback is executed before an action
     public function beforeFilter() {
 
-        $this->Security->requireSecure();
+        //$this->Security->blackHoleCallback = 'forceSSL';
+        //$this->Security->requireSecure();
         $this->Security->requireAuth();
-        $this->Security->blackHoleCallback = 'blackhole';
 
         // all login, register and display actions to all
         $this->Auth->allow('display', 'login', 'register');
@@ -104,7 +103,6 @@ class AppController extends Controller {
     public function isAuthorized($user) {
         // default deny all unless otherwise specified in ACL
         // located in UsersController.php - ACLinit()
-        
         // Only admins can access admin functions
         if (isset($this->request->params['admin'])) {
             return (bool) ($user['Group']['id'] == 1);
