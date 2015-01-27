@@ -29,6 +29,5 @@ echo $this->Form->submit('Sign me in', array(
 
 // end
 echo $this->Form->end();
-?>
 
-<?php echo $this->Html->link('Register a new membership', array('controller' => 'Users', 'action' => 'register'), array('title' => 'Register!')); ?>
+echo $this->Html->link('Register a new membership', array('controller' => 'Users', 'action' => 'register'), array('title' => 'Register!'));

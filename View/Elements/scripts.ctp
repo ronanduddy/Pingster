@@ -12,4 +12,3 @@ echo $this->Html->script(
 //            'plugins/input-mask/jquery.inputmask.regex.extensions'
         )
 );
-?>

@@ -228,4 +228,3 @@ echo $this->element('Admin/foot', array(
         $this->Form->postLink(__('Delete User'), array('action' => 'delete', $user['User']['id']), array('class' => 'btn btn-danger btn-flat'), __('Are you sure you want to delete # %s?', $user['User']['id'])),
     )
 ));
-?>

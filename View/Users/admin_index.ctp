@@ -51,4 +51,3 @@ echo $this->element('Admin/foot', array(
         $this->Html->link(__('New User'), array('action' => 'add'), array('class' => 'btn btn-primary btn-flat')),
     )
 ));
-?>

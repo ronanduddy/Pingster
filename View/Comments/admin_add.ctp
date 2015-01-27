@@ -24,4 +24,3 @@ echo $this->element('Admin/foot', array(
         $this->Form->end()
     )
 ));
-?>

@@ -43,4 +43,4 @@
     </div>
 </div>
 
-<?php echo $this->element('addComment'); ?>
+<?php echo $this->element('addComment');

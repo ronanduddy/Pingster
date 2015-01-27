@@ -77,4 +77,3 @@ echo $this->element('Admin/foot', array(
         $this->Form->postLink(__('Delete Group'), array('action' => 'delete', $this->params['pass'][0]), array('class' => 'btn btn-danger btn-flat'), __('Are you sure you want to delete # %s?', $this->params['pass'][0])),
     )
 ));
-?>

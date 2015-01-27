@@ -49,4 +49,3 @@ echo $this->element('Admin/foot', array(
         $this->Html->link(__('New Project'), array('action' => 'add'), array('class' => 'btn btn-primary btn-flat')),
     )
 ));
-?>
