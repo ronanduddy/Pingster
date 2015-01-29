@@ -32,7 +32,7 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 
-    public $s3_bucket = 'pingsterdev';
+    public $s3_bucket = 'pingster';
     // this is for all controllers to have access to the dashboard url:
     public $dashboard = array('controller' => 'users', 'action' => 'dashboard');
     public $helpers = array(
@@ -40,16 +40,15 @@ class AppController extends Controller {
         'Html' => array('className' => 'SideNav'),
     );
     public $components = array(
-        'DebugKit.Toolbar',
         'Amazonsdk.Amazon',
         'Session',
         'Acl',
-        'Security' => array(
-            'requirePost' => 'delete',
-            'csrfCheck' => true,
-            'csrfExpires' => '+30 minutes'
-        ),
+//        'Security',
         'Auth' => array(
+            'loginAction' => array(
+                'controller' => 'users',
+                'action' => 'login'
+            ),
             // redirect to dashboard/profile page after login
             'loginRedirect' => array(
                 'controller' => 'users',
@@ -75,26 +74,29 @@ class AppController extends Controller {
             // for blowfish password
             'authenticate' => array(
                 'Form' => array(
-                    'passwordHasher' => 'Blowfish'
+                    'passwordHasher' => 'Blowfish',
                 )
             )
         )
     );
 
     // security component handler
-    public function forceSSL() {
+    public function blackhole($error) {
+//	echo $error;
         return $this->redirect('https://' . env('SERVER_NAME') . $this->here);
     }
 
     // This callback is executed before an action
     public function beforeFilter() {
 
-        //$this->Security->blackHoleCallback = 'forceSSL';
-        //$this->Security->requireSecure();
-        $this->Security->requireAuth();
-        $this->Auth->autoRedirect = false;
+//        $this->Security->blackHoleCallback = 'blackhole';
+//        $this->Security->requireSecure();
+//        $this->Security->csrfCheck = false;
+//        $this->Security->csrfExpires = '+1 hour';
+//        $this->Security->requireAuth();
+//        
         // all login, register and display actions to all
-        $this->Auth->allow('display', 'login', 'register');
+        $this->Auth->allow('display', 'login', 'logout', 'register');
 
         // send user data to view. send entire user record.
         $this->set('current_user', $this->Auth->user());
