@@ -42,7 +42,7 @@ class ProjectsController extends AppController {
     public function community($id = null) {
         $this->Paginator->settings = array(
             'conditions' => array('Project.status' => 'public'),
-            'limit' => 5,
+            'limit' => 10,
             'order' => array(
                 'Project.created' => 'DESC'
             )
@@ -59,7 +59,7 @@ class ProjectsController extends AppController {
         $order = 'Project.created DESC';
         $joins = $this->Project->generateHabtmJoin('User', 'INNER');
         $conditions = array('User.id' => $user['id']);
-        $limit = 5;
+        $limit = 10;
 
         $this->paginate = compact('joins', 'conditions', 'order', 'limit');
         $projects = $this->paginate();
