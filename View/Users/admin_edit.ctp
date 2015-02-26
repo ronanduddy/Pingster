@@ -28,10 +28,10 @@ echo $this->Form->input('User.age', array(
 
 // for user model:
 // username 
-//            echo $this->Form->input('User.username', array(
-//                'readonly' => 'readonly',
-//                'label' => 'Usernames cannot be changed!'
-//            ));
+echo $this->Form->input('User.username', array(
+    'label' => 'Username'
+));
+
 // for user model:
 // user group
 echo $this->Form->input('User.group_id', array(
