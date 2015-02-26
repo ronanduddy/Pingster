@@ -43,10 +43,6 @@ class User extends AppModel {
                 'rule' => array('email'),
                 'message' => 'Please provide a valid email address',
             ),
-            'isUnique' => array(
-                'rule' => array('isUniqueEmail'),
-                'message' => 'Your Email must be between unique',
-            ),
             'isBetween' => array(
                 'rule' => array('between', 6, 64),
                 'message' => 'Usernames can be between 6 to 64 characters long'
