@@ -26,7 +26,7 @@
             </p>
             <p style="text-align: right">
                 <?php
-                echo $this->Html->link('Create new Ping', array('controller' => 'Projects', 'action' => 'addPing'), array('title' => 'Create a Ping project', 'class' => 'btn btn-default'));
+                echo $this->Html->link('Create new Ping', array('controller' => 'Projects', 'action' => 'addPing'), array('title' => 'Create a Ping project', 'class' => 'btn btn-success btn-lg'));
                 ?>
             </p>
         </div>
