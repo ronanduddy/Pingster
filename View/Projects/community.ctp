@@ -1,4 +1,4 @@
-<?php //debug($data);              ?>
+<?php //debug($data);                ?>
 <div class="col-lg-3">
     <div class="box box-primary" id="content">
         <div class="box-header">
@@ -76,11 +76,13 @@
             'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
         ));
         ?>	</p>
-    <div class="btn-group">
+    <nav>
+    <ul class="pagination btn-group">
         <?php
-        echo $this->Paginator->prev('< ' . __('previous'), array('class' => 'btn btn-default'), null, array('class' => 'btn btn-default disabled'));
-        echo $this->Paginator->numbers(array('separator' => '', 'class' => 'btn btn-default'));
-        echo $this->Paginator->next(__('next') . ' >', array('class' => 'btn btn-default'), null, array('class' => 'next btn btn-default disabled'));
+        echo $this->Paginator->prev('< ' . __('previous'), array('tag' => 'li'), null, array('class' => 'btn btn-default disabled'));
+        echo $this->Paginator->numbers(array('separator' => '', 'tag' => 'li', 'currentClass' => 'btn btn-default'));
+        echo $this->Paginator->next(__('next') . ' >', array('tag' => 'li'), null, array('class' => 'btn btn-default disabled'));
         ?>
-    </div>
+    </ul>
+    </nav>
 </div>
