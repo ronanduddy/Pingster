@@ -1,4 +1,4 @@
-<?php //debug($data);    ?>
+<?php //debug($data);     ?>
 <div class="col-lg-3">
     <div class="box box-primary">
         <div class="box-header">
@@ -64,19 +64,20 @@
             </div>      
         </div>
     <?php endforeach; ?>
+<?php endif; ?>
 
+<div class="col-lg-3">
     <p>
         <?php
         echo $this->Paginator->counter(array(
             'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
         ));
         ?>	</p>
-    <div class="paging">
+    <div class="btn-group">
         <?php
-        echo $this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));
-        echo $this->Paginator->numbers(array('separator' => ''));
-        echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
+        echo $this->Paginator->prev('< ' . __('previous'), array('class' => 'btn btn-default'), null, array('class' => 'btn btn-default disabled'));
+        echo $this->Paginator->numbers(array('separator' => '', 'class' => 'btn btn-default'));
+        echo $this->Paginator->next(__('next') . ' >', array('class' => 'btn btn-default'), null, array('class' => 'next btn btn-default disabled'));
         ?>
     </div>
-
-<?php endif;
+</div>
