@@ -97,6 +97,10 @@ class UsersController extends AppController {
 
         if ($this->request->is('post')) {
             $this->User->create();
+
+            // set to group id for pingster user
+            $this->request->data['User']['group_id'] = 3;
+
             if ($this->User->save($this->request->data)) {
 
                 // if login succeeds -> direct to dashboard

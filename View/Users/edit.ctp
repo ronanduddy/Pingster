@@ -34,9 +34,13 @@
 //            ));
             // for user model:
             // user group
-            echo $this->Form->input('User.group_id', array(
-                'label' => 'You are a member of',
-            ));
+            
+            // don't want pingsters to change groups
+            if($current_user['Group']['id'] == 1) {
+                echo $this->Form->input('User.group_id', array(
+                    'label' => 'You are a member of',
+                ));
+            }
 
             // for user model:
             // school 
