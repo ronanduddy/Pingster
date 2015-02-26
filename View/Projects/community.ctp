@@ -33,7 +33,7 @@
     </div>      
 </div>
 <?php if (!empty($data)): ?>
-    <?php foreach (array_reverse($data) as $projectKey => $projectData) : ?>
+    <?php foreach ($data as $projectKey => $projectData) : ?>
         <div class="col-lg-3">
 
             <div class="box box-primary">
