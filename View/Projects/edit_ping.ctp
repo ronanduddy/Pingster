@@ -17,7 +17,10 @@
             echo $this->Form->input('Project.id');
 
             echo $this->Form->input('Project.kind', array('value' => 'ping', 'type' => 'hidden'));
-            echo $this->Form->input('Project.title');
+            echo $this->Form->input('Project.title', array(
+                'label' => 'Give your Ping a groovie name',
+                'placeholder' => 'Bebop'
+            ));
             ?>
             <div class="form-group required">
                 <label class="control-label col-lg-4" for="ProjectDescription">Description</label>
@@ -29,7 +32,8 @@
                         'class' => 'form-control',
                         'style' => 'resize: vertical;',
                         'rows' => '5',
-                        'maxlength' => '140'
+                        'maxlength' => '140',
+                        'placeholder' => 'What\'s it all about?'
                     ));
                     ?>  
                 </div>
@@ -40,7 +44,7 @@
                     'private' => 'Private',
                     'public' => 'Public'
                 ),
-                'label' => 'Project status',
+                'label' => 'Visibility',
             ));
 //            echo $this->Form->input('Tag.tag_content', array(
 //                'label' => 'Tag',
@@ -60,7 +64,8 @@
                 'type' => 'file',
                 'label' => 'Image',
                 'class' => '',
-                'required' => false
+                'required' => false,
+                'label' => 'Upload a new pic',
             ));
             echo $this->Form->input('Project.image_url', array('type' => 'hidden'));
             ?>
@@ -80,4 +85,14 @@
             </div>
         </div>
     </div>
+
+    <div class="alert alert-info alert-dismissable">
+        <i class="fa fa-info"></i>
+        <button class="close" aria-hidden="true" data-dismiss="alert" type="button">×</button>
+        <b>Did you know</b>
+        <p>
+            To showcase your Ping, set it's visibility to public. That way it can be seen in the community by everyone.
+        </p>
+    </div>
+
 </div>
