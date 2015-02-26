@@ -44,7 +44,7 @@ class ProjectsController extends AppController {
             'conditions' => array('Project.status' => 'public'),
             'limit' => 5,
             'order' => array(
-                'Project.created' => 'asc'
+                'Project.created' => 'DESC'
             )
         );
         $data = $this->Paginator->paginate('Project');
