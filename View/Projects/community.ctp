@@ -1,4 +1,4 @@
-<?php //debug($data); ?>
+<?php //debug($data);  ?>
 <style>
     @media(max-width:767px){
         .masonryItem{
@@ -74,7 +74,7 @@
 
                     <div class="box-body">
                         <div class="thumbnail">
-                            <?php echo $this->Html->image($projectData['Project']['image_url']); ?>
+                            <?php echo $this->Html->image($projectData['Project']['image_url'], array('class' => 'lazy', 'data-original' => $projectData['Project']['image_url'])); ?>
                         </div>
                         <?php if ($projectData['Tag'] != null) : ?>
                             <?php foreach ($projectData['Tag'] as $tag) : ?>

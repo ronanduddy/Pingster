@@ -2,6 +2,7 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js" type="text/javascript"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.2.2/masonry.pkgd.min.js" type="text/javascript"></script>
+<script src="//www.appelsiini.net/projects/lazyload/jquery.lazyload.min.js" type="text/javascript"></script>
 <script>
     $(window).load(function () {
 
@@ -11,11 +12,12 @@
             columnWidth: 135,
             // isFitWidth: true,
             gutter: 40
-            //isInitLayout: true
         });
 
-        $container.imagesLoaded(function () {
-            $container.masonry();
+        $(function () {
+            $("img.lazy").show.lazyload();
+            threshold : 200;
+            effect: "fadeIn";
         });
 
     });
