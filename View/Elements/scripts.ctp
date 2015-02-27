@@ -3,14 +3,19 @@
 <script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js" type="text/javascript"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.2.2/masonry.pkgd.min.js" type="text/javascript"></script>
 <script>
-    docReady(function () {
+    $(window).load(function () {
 
         var container = document.querySelector('#masonryContainer');
         var msnry = new Masonry(container, {
             itemSelector: '.masonryItem',
             columnWidth: 135,
-           // isFitWidth: true,
+            // isFitWidth: true,
             gutter: 40
+            //isInitLayout: true
+        });
+
+        $container.imagesLoaded(function () {
+            $container.masonry();
         });
 
     });
