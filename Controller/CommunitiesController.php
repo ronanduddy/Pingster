@@ -71,7 +71,12 @@ class CommunitiesController extends AppController {
         //exit();
         // getting projects
         $this->Paginator->settings = array(
-            'conditions' => array('Project.id' => $CommunitiesProject),
+            'conditions' => array(
+                'AND' => array(
+                    'Project.id' => $CommunitiesProject,
+                    'Project.status' => 'public'
+                ),
+            ),
             'limit' => 10,
             'order' => array('Project.created' => 'desc'),
             'recursive' => -1
