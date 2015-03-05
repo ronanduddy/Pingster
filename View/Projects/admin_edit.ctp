@@ -41,6 +41,14 @@ echo $this->Form->input('Project.status', array(
     ),
     'label' => 'Project status',
 ));
+
+echo $this->Form->input('Project.community', array(
+    'label' => 'Community',
+    'type' => 'select',
+    'options' => $communities,
+    'empty' => 'Choose a community',
+));
+
 //            echo $this->Form->input('Tag.tag_content', array(
 //                'label' => 'Tag',
 //            ));
