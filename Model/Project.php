@@ -145,7 +145,8 @@ class Project extends AppModel {
             'finderQuery' => '',
             'counterQuery' => ''
         ),
-        'ProjectsUser'
+        'ProjectsUser',
+        'CommunitiesProject'
     );
 
     /**
@@ -185,6 +186,19 @@ class Project extends AppModel {
             'joinTable' => 'projects_tags',
             'foreignKey' => 'project_id',
             'associationForeignKey' => 'tag_id',
+            'unique' => 'keepExisting',
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'finderQuery' => '',
+        ),
+        'Community' => array(
+            'className' => 'Community',
+            'joinTable' => 'communities_projects',
+            'foreignKey' => 'project_id',
+            'associationForeignKey' => 'community_id',
             'unique' => 'keepExisting',
             'conditions' => '',
             'fields' => '',

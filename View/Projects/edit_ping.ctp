@@ -1,3 +1,4 @@
+<?php //debug($communities);  ?>
 <div class="col-lg-6 col-lg-offset-3">
     <div class="box box-primary">
         <div class="box-header">
@@ -46,6 +47,14 @@
                 ),
                 'label' => 'Visibility',
             ));
+            
+            echo $this->Form->input('Project.community', array(
+                'label' => 'Community',
+                'type' => 'select',
+                'options' => $communities,
+                'empty'=> 'Choose a community',
+            ));
+
 //            echo $this->Form->input('Tag.tag_content', array(
 //                'label' => 'Tag',
 //            ));

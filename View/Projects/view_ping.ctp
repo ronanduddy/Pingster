@@ -1,4 +1,4 @@
-<?php //debug($project);   ?>
+<?php //debug($community);    ?>
 <div class="col-lg-6">
     <div class="box box-primary">
         <div class="box-header">
@@ -8,26 +8,34 @@
             </h3>
         </div>
         <div class="box-body">
-            <?php if ($current_user['group_id'] == 1) : ?>
-                <div class="callout callout-warning">
-                    <h4>Known Issue</h4>
-                    <p>When editing a ping you will be directed to a 'Missing View' page.</p>
-                    <p>When deleting a ping you will be logged out, but the ping will still be deleted. It's recommended to delete the ping from the 'Projects' link on the left.</p>
-                </div>
-            <?php endif; ?>
+            <p>
+                <?php
+                echo sprintf('Started by %s (%s) on the %s at %s ', 
+                        $this->Html->link($project['User']['username'], array(
+                            'controller' => 'users',
+                            'action' => 'view',
+                            h($project['User']['id'])
+                        )),
+                        h($project['ProjectsUser']['user_role']), 
+                        h(date("jS F, Y", strtotime($project['Project']['created']))), 
+                        h(date("g:ia", strtotime($project['Project']['created']))));
+
+                if (!empty($community)) {
+                    echo sprintf('and is a member of the %s community.', 
+                            $this->Html->link($community['Community']['name'], array(
+                                'controller' => 'communities',
+                                'action' => 'view',
+                                h($community['Community']['id'])
+                    )));
+                } else {
+                    echo 'is not yet a part of a community.';
+                }
+                ?>
+            </p>
             <div class="thumbnail">
                 <?php echo $this->Html->image($project['Project']['image_url']); ?>
             </div>
             <p><?php echo h($project['Project']['description']); ?></p>
-            <p>
-                <?php
-                echo sprintf('Started by %s (%s) on %s', $this->Html->link($project['User']['username'], array(
-                            'controller' => 'users',
-                            'action' => 'view',
-                            h($project['User']['id'])
-                        )), h($project['ProjectsUser']['user_role']), h(date("d F, Y", strtotime($project['Project']['created']))));
-                ?>
-            </p>
         </div>
         <div class="box-footer" style="text-align: right">
             <div class="btn-group" >
@@ -43,4 +51,5 @@
     </div>
 </div>
 
-<?php echo $this->element('addComment');
+<?php
+echo $this->element('addComment');

@@ -43,6 +43,7 @@ class AppController extends Controller {
         'Amazonsdk.Amazon',
         'Session',
         'Acl',
+        'DebugKit.Toolbar',
 //        'Security',
         'Auth' => array(
             'loginAction' => array(

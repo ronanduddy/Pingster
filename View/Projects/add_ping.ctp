@@ -60,6 +60,14 @@
                 'label' => 'Visibility',
             ));
 
+            echo $this->Form->input('Project.community', array(
+                'label' => 'Community',
+                'type' => 'select',
+                'options' => $communities,
+                'default' => 0,
+                'empty' => 'Where do you go?', 'selected' => 'Your Value'
+            ));
+
 //            echo $this->Form->input('Tag.tag_content', array(
 //                'label' => 'Tag',
 //            ));

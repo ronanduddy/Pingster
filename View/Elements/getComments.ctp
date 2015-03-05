@@ -17,7 +17,7 @@
                     <li class="time-label">
                         <span class="bg-blue-gradient"> 
                             <?php
-                            echo h(date("dS M. y", strtotime($comment['Comment']['created'])));
+                            echo h(date("jS M. y", strtotime($comment['Comment']['created'])));
                             $day = date("d", strtotime($comment['Comment']['created']));
                             ?>
                         </span>
@@ -26,7 +26,7 @@
                     <li class="time-label">
                         <span class="bg-blue-gradient"> 
                             <?php
-                            echo h(date("dS M. y", strtotime($comment['Comment']['created'])));
+                            echo h(date("jS M. y", strtotime($comment['Comment']['created'])));
                             $day = date("d", strtotime($comment['Comment']['created']));
                             ?>
                         </span>

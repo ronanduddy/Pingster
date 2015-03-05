@@ -14,11 +14,9 @@
             gutter: 40
         });
 
-        $(function () {
-            $("img.lazy").show.lazyload();
-            threshold : 200;
-            effect: "fadeIn";
-        });
+        $("img.lazy").lazyload();
+        threshold : 200;
+        effect: "fadeIn";
 
     });
 </script>

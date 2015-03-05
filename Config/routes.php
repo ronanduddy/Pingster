@@ -27,40 +27,6 @@
  */
 // pingster/ and pingster/home -> Pages/home.ctp
 Router::connect('/', array('controller' => 'home', 'action' => 'index'));
-Router::connect('/:home', array('controller' => 'home', 'action' => 'index'), array("home" => "[hH]ome"));
-
-// pingster/dashboard -> profiles/index
-Router::connect('/:dashboard', array('controller' => 'users', 'action' => 'dashboard'), array("dashboard" => "[dD]ashboard"));
-
-// pingster/signup -> users/signup
-Router::connect('/:register', array('controller' => 'users', 'action' => 'register'), array("register" => "[rR]egister"));
-
-// pingster/login -> users/login
-Router::connect('/:login', array('controller' => 'users', 'action' => 'login'), array("login" => "[lL]ogin"));
-
-// pingster/logout -> users/logout
-Router::connect('/:logout', array('controller' => 'users', 'action' => 'logout'), array("login" => "[lL]ogout"));
-
-// admin routes:
-//Router::connect('/:projects/', array('controller' => 'projects', 'action' => 'index', 'admin' => true), array("projects" => "[pP]rojects"));
-//Router::connect('/:projects/:index', array('controller' => 'projects', 'action' => 'index', 'admin' => true), array("projects" => "[pP]rojects", "index" => "[iI]ndex"));
-//Router::connect('/:projects/:edit/*', array('controller' => 'projects', 'action' => 'edit', 'admin' => true), array("edit" => "[eE]dit"));
-//Router::connect('/:projects/:view/*', array('controller' => 'projects', 'action' => 'view', 'admin' => true), array("view" => "[vV]iew"));
-//Router::connect('/:projects/:add', array('controller' => 'projects', 'action' => 'add', 'admin' => true), array("add" => "[aA]dd"));
-//Router::connect('/:projects/:addPing', array('controller' => 'projects', 'action' => 'add', 'admin' => true), array("addPing" => "[aA]ddPing"));
-//
-//Router::connect('/:projects/', array('controller' => 'projects', 'action' => 'index', 'admin' => false), array("projects" => "[pP]rojects"));
-//Router::connect('/:projects/:index', array('controller' => 'projects', 'action' => 'index', 'admin' => false), array("projects" => "[pP]rojects", "index" => "[iI]ndex"));
-//Router::connect('/:projects/:edit/*', array('controller' => 'projects', 'action' => 'edit', 'admin' => false), array("edit" => "[eE]dit"));
-//Router::connect('/:projects/:view/*', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array("view" => "[vV]iew"));
-//Router::connect('/:projects/:add', array('controller' => 'projects', 'action' => 'add', 'admin' => false), array("add" => "[aA]dd"));
-//Router::connect('/:projects/:addPing', array('controller' => 'projects', 'action' => 'add', 'admin' => false), array("addPing" => "[aA]ddPing"));
-//
-//Router::connect('/:users/:view/*', array('controller' => 'users', 'action' => 'view', 'admin' => true), array("users" => "[uU]sers", "view" => "[vV]iew"));
-
-
-
-
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.

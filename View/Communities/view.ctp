@@ -1,4 +1,4 @@
-<?php //debug($data);  ?>
+<?php //debug($projects);       ?>
 <style>
     @media(max-width:767px){
         .masonryItem{
@@ -29,27 +29,16 @@
         <div class="box box-success">
             <div class="box-header">
                 <h3 class="box-title">
-                    Make a Ping!
+                    <?php echo h($community['Community']['name']); ?>
                 </h3>
             </div>
-            <div class="box-body">
-                <?php if ($current_user['group_id'] == 1) : ?>
-                    <div class="callout callout-warning">
-                        <h4>Known Issue</h4>
-                        <p>When creating a ping you will be logged out for some reason. The ping will be still be created though. It's advised to create a ping from the 'Projects' link on the left.</p>
-                    </div>
-                <?php endif; ?>
+            <div class="box-body">             
                 <div class="thumbnail" style="background-color: #e8535d">
                     <?php echo $this->Html->image('pingster.png'); ?>
                 </div>
                 The Ping world awaits you...
             </div>
             <div class="box-footer">
-                <p> 
-                    This is a list of all the Pings that are set to 'Public'. 
-                    This means that they are viewable, commentable and their assets are downloadable to anyone on Pingster. 
-                    Want to upload a Ping?
-                </p>
                 <p style="text-align: right">
                     <?php
                     echo $this->Html->link('Create new Ping', array('controller' => 'Projects', 'action' => 'addPing'), array('title' => 'Create a Ping project', 'class' => 'btn btn-success btn-lg'));
@@ -59,34 +48,29 @@
         </div>      
     </div>
 
-    <?php if (!empty($data)): ?>
-        <?php foreach ($data as $projectKey => $projectData) : ?>
+    <?php if (!empty($projects)): ?>
+        <?php foreach ($projects as $project): ?>
 
             <div class="masonryItem">
                 <div class="box box-primary">
                     <div class="box-header">
                         <i class="fa fa-folder-o"></i>
                         <h3 class="box-title">
-                            <?php echo h(preg_replace('/(\w+)([A-Z])/U', '\\1 \\2', ucfirst($projectData['Project']['title']))); ?>
-                            <small><?php echo h(ucfirst($projectData['Project']['status']) . ' ' . ucfirst($projectData['Project']['kind'])); ?></small>
+                            <?php echo h(preg_replace('/(\w+)([A-Z])/U', '\\1 \\2', ucfirst($project['Project']['title']))); ?>
+                            <small><?php echo h(ucfirst($project['Project']['status']) . ' ' . ucfirst($project['Project']['kind'])); ?></small>
                         </h3>
                     </div>
 
                     <div class="box-body">
                         <div class="thumbnail">
-                            <?php echo $this->Html->image($projectData['Project']['image_url'], array('class' => 'lazy', 'data-original' => $projectData['Project']['image_url'])); ?>
+                            <?php echo $this->Html->image($project['Project']['image_url'], array('class' => 'lazy', 'data-original' => $project['Project']['image_url'])); ?>
                         </div>
-                        <?php if ($projectData['Tag'] != null) : ?>
-                            <?php foreach ($projectData['Tag'] as $tag) : ?>
-                                <?php echo '<br>#' . h($tag['tag_content']); ?>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
                     </div>
 
                     <div class="box-footer">
                         <p style="text-align: right">
                             <?php
-                            echo $this->Html->link('View', array('controller' => 'Projects', 'action' => 'viewPing', $projectData['Project']['id']), array('title' => 'View this Ping', 'class' => 'btn btn-primary'));
+                            echo $this->Html->link('View', array('controller' => 'Projects', 'action' => 'viewPing', $project['Project']['id']), array('title' => 'View this Ping', 'class' => 'btn btn-primary'));
                             ?>
                         </p>
                     </div>
@@ -94,6 +78,25 @@
             </div>
 
         <?php endforeach; ?>
+    <?php else: ?>
+        <div class="masonryItem">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="fa fa-folder"></i>
+                    <h3 class="box-title">
+                        None here!
+                    </h3>
+                </div>
+
+                <div class="box-body">
+                    <div class="thumbnail">
+                        <h1 style="text-align: center"><i class="fa fa-question"></i></h1>
+                    </div>                    
+                    <p>This community hasn't any Pings yet</p>
+                </div>
+               
+            </div>      
+        </div>
     <?php endif; ?>
 
     <div class="masonryItem">

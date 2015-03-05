@@ -38,19 +38,6 @@ class ProjectsController extends AppController {
         $this->set('project', $this->Project->find('first', $options));
     }
 
-    // list all of the public pings
-    public function community($id = null) {
-        $this->Paginator->settings = array(
-            'conditions' => array('Project.status' => 'public'),
-            'limit' => 10,
-            'order' => array(
-                'Project.created' => 'DESC'
-            )
-        );
-        $data = $this->Paginator->paginate('Project');
-        $this->set(compact('data'));
-    }
-
     // list all of the user's pings
     public function myPings($id = null) {
         // get user from auth object. 
@@ -81,6 +68,8 @@ class ProjectsController extends AppController {
                 ),
             )
         );
+
+        // find project and set into view
         $this->Project->recursive = -1;
         $this->set('project', $this->Project->ProjectsUser->find('first', $options));
 
@@ -92,6 +81,31 @@ class ProjectsController extends AppController {
         );
         $commentsList = $this->Paginator->paginate('Comment');
         $this->set(compact('commentsList'));
+
+        // get community id from link table
+        // options for getting project ids from link table 
+        $options = array(
+            'conditions' => array(
+                'AND' => array(
+                    'CommunitiesProject.project_id' => $id
+                ),
+            ),
+            'fields' => array(
+                'CommunitiesProject.community_id'
+            )
+        );
+
+        // find all project ids that are associated with the community (from link table)
+        $this->Project->CommunitiesProject->recursive = -1;
+        $CommunitiesProject = $this->Project->CommunitiesProject->find('first', $options);
+
+        // if nothing
+        if (!empty($CommunitiesProject)) {
+
+            // get name and id of community for view
+            $this->Project->CommunitiesProject->Community->recursive = -1;
+            $this->set('community', $this->Project->CommunitiesProject->Community->findById($CommunitiesProject['CommunitiesProject']['community_id']));
+        }
     }
 
     public function admin_add() {
@@ -141,14 +155,21 @@ class ProjectsController extends AppController {
                     $this->Project->set('image_url', $this->Amazon->S3->request_url);
                     $this->Project->set('image', $name);
 
-                    // update
+                    // record
                     $this->Project->save();
+
+                    // community project is member of
+                    $community_id = $this->request->data['Project']['community'];
+                    if (isset($community_id) && $community_id != NULL) {
+                        $this->Project->CommunitiesProject->create();
+                        $this->Project->CommunitiesProject->save(array('project_id' => $this->Project->id, 'community_id' => $community_id));
+                    }
 
                     $this->Session->setFlash('Ping created.', 'Flashes/success');
                     if ($user['group_id'] == 1) {
-                        return $this->redirect(array('action' => 'index'));
+                        return $this->redirect(array('action' => 'viewPing', $this->Project->id, 'admin' => false));
                     } else {
-                        return $this->redirect(array('action' => 'myPings'));
+                        return $this->redirect(array('action' => 'viewPing', $this->Project->id));
                     }
                 }
             } else {
@@ -156,7 +177,9 @@ class ProjectsController extends AppController {
                 return $this->redirect(array('action' => 'myPings'));
             }
         }
-        $this->set('user', $this->Auth->user());
+
+        $communities = $this->Project->Community->find('list');
+        $this->set(compact('user', 'communities'));
 //        $assets = $this->Project->Asset->find('list');
 //        $users = $this->Project->User->find('list');
 //        $this->set(compact('assets', 'users'));
@@ -178,7 +201,7 @@ class ProjectsController extends AppController {
         }
 
         if ($this->request->is(array('post', 'put'))) {
-
+            //   debug($this->request); exit();
             if ($this->request->data['Project']['image']['size'] != 0) {
 
                 // delete old image    
@@ -221,12 +244,26 @@ class ProjectsController extends AppController {
                 $this->Project->set('image', $name);
                 $this->Project->set('id', $this->request->data['Project']['id']);
 
+                // update community project is member of
+                $community_id = $this->request->data['Project']['community'];
+                // debug( $this->request->data); exit();
+                if (isset($community_id) && $community_id != NULL) {
+
+                    $comProj_id = $this->Project->CommunitiesProject->findByProjectId($id);
+                    if ($comProj_id == null) {
+                        $this->Project->CommunitiesProject->create();
+                        $this->Project->CommunitiesProject->save(array('project_id' => $id, 'community_id' => $community_id));
+                    } else {
+                        $this->Project->CommunitiesProject->id = $comProj_id;
+                        $this->Project->CommunitiesProject->saveField('community_id', $community_id);
+                    }
+                } // end if
                 // update
                 $this->Project->save();
                 $this->Session->setFlash('The Ping has been edited..', 'Flashes/success');
 
                 if ($user['group_id'] == 1) {
-                    return $this->redirect(array('action' => 'view', $id));
+                    return $this->redirect(array('action' => 'viewPing', $id, 'admin' => false));
                 } else {
                     return $this->redirect(array('action' => 'viewPing', $id));
                 }
@@ -238,10 +275,25 @@ class ProjectsController extends AppController {
                 $this->Project->set('status', $this->request->data['Project']['status']);
                 $this->Project->set('id', $this->request->data['Project']['id']);
 
+                // update community project is member of
+                $community_id = $this->request->data['Project']['community'];
+                // debug( $this->request->data); exit();
+                if (isset($community_id) && $community_id != NULL) {
+
+                    $comProj_id = $this->Project->CommunitiesProject->findByProjectId($id);
+                    if ($comProj_id == null) {
+                        $this->Project->CommunitiesProject->create();
+                        $this->Project->CommunitiesProject->save(array('project_id' => $id, 'community_id' => $community_id));
+                    } else {
+                        $this->Project->CommunitiesProject->id = $comProj_id;
+                        $this->Project->CommunitiesProject->saveField('community_id', $community_id);
+                    }
+                } // end if
+
                 if ($this->Project->save()) {
                     $this->Session->setFlash('The Ping has been edited.', 'Flashes/success');
                     if ($user['group_id'] == 1) {
-                        return $this->redirect(array('action' => 'view', $id));
+                        return $this->redirect(array('action' => 'viewPing', $id, 'admin' => false));
                     } else {
                         return $this->redirect(array('action' => 'viewPing', $id));
                     }
@@ -253,9 +305,11 @@ class ProjectsController extends AppController {
             $options = array('conditions' => array('Project.' . $this->Project->primaryKey => $id));
             $this->request->data = $this->Project->find('first', $options);
         }
+
         $assets = $this->Project->Asset->find('list');
         $users = $this->Project->User->find('list');
-        $this->set(compact('assets', 'users'));
+        $communities = $this->Project->Community->find('list');
+        $this->set(compact('assets', 'users', 'communities'));
     }
 
     public function admin_delete($id = null) {

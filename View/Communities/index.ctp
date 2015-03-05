@@ -1,4 +1,4 @@
-<?php //debug($data);    ?>
+<?php //debug($data);          ?>
 <style>
     @media(max-width:767px){
         .masonryItem{
@@ -29,62 +29,57 @@
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">
-                    Make a Ping!
+                    Communities
                 </h3>
             </div>
             <div class="box-body">
                 <div class="thumbnail" style="background-color: #e8535d">
                     <?php echo $this->Html->image('pingster.png'); ?>                
                 </div>
-                The Ping world awaits you...
+                The Pingster Community
             </div>
             <div class="box-footer">
                 <p style="text-align: right">
                     <?php
-                    echo $this->Html->link('Create new Ping', array('controller' => 'Projects', 'action' => 'addPing'), array('title' => 'Create a Ping project', 'class' => 'btn btn-success btn-lg'));
+                    if ($current_user['Group']['id'] == 1) {
+                        echo $this->Html->link('Create new community', array('controller' => 'communities', 'action' => 'add', 'admin' => true), array('title' => 'Create a Community', 'class' => 'btn btn-success btn-lg'));
+                    }
                     ?>
                 </p>
             </div>
         </div>      
     </div>
 
-    <?php if (!empty($data['projects'])): ?>
-        <?php foreach ($data['projects'] as $projectKey => $projectData) : ?>
+    <?php foreach ($communities as $community) : ?>
 
-            <div class="masonryItem">
-                <div class="box box-primary">
-                    <div class="box-header">
-                        <i class="fa fa-folder-o"></i>
-                        <h3 class="box-title">
-                            <?php echo h(preg_replace('/(\w+)([A-Z])/U', '\\1 \\2', ucfirst($projectData['Project']['title']))); ?>
-                            <small><?php echo h(ucfirst($projectData['Project']['status']) . ' ' . ucfirst($projectData['Project']['kind'])); ?></small>
-                        </h3>
+        <div class="masonryItem">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="fa fa-folder-o"></i>
+                    <h3 class="box-title">
+                        <?php echo h($community['Community']['name']); ?>
+                    </h3>
+                </div>
+
+                <div class="box-body">
+
+                    <div class="thumbnail">
+                        <?php //echo $this->Html->image($projectData['Project']['image_url'], array('class' => 'lazy', 'data-original' => $projectData['Project']['image_url'])); ?>
+                        <h1 style="text-align: center"><i class="fa fa-globe"></i></h1>
                     </div>
+                </div>
 
-                    <div class="box-body">
+                <div class="box-footer">
+                    <p style="text-align: right">
+                        <?php
+                        echo $this->Html->link('View', array('controller' => 'communities', 'action' => 'view', $community['Community']['id']), array('title' => 'View this Community', 'class' => 'btn btn-primary'));
+                        ?>
+                    </p>
+                </div>
+            </div>      
+        </div>
 
-                        <div class="thumbnail">
-                            <?php echo $this->Html->image($projectData['Project']['image_url'], array('class' => 'lazy', 'data-original' => $projectData['Project']['image_url'])); ?>
-                        </div>
-                        <?php if ($projectData['Tag'] != null) : ?>
-                            <?php foreach ($projectData['Tag'] as $tag) : ?>
-                                <?php echo '<br>#' . h($tag['tag_content']); ?>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="box-footer">
-                        <p style="text-align: right">
-                            <?php
-                            echo $this->Html->link('View', array('controller' => 'Projects', 'action' => 'viewPing', $projectData['Project']['id']), array('title' => 'View this Ping', 'class' => 'btn btn-primary'));
-                            ?>
-                        </p>
-                    </div>
-                </div>      
-            </div>
-
-        <?php endforeach; ?>
-    <?php endif; ?>
+    <?php endforeach; ?>
 
     <div class="masonryItem">
         <div class="box box-info">

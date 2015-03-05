@@ -1,11 +1,9 @@
 <?php
 echo $this->element('Admin/head', array(
-    'adminTitle' => 'View User',
+    'adminTitle' => 'Edit Project',
     'icon' => 'fa-archive',
 ));
-?>
 
-<?php
 // create form
 echo $this->Form->create('Project', array(
     'action' => 'editPing',

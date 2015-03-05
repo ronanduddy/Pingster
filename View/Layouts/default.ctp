@@ -76,16 +76,27 @@
                 <!-- sidebar: style can be found in sidebar.less -->
                 <section class="sidebar">
                     <!-- sidebar menu: : style can be found in sidebar.less -->
-                    <ul class="sidebar-menu">
+                    <ul class="sidebar-menu nav nav-pills nav-stacked">
                         <li><?php echo $this->SideNav->LinkIcon('Dashboard', 'fa fa-dashboard', array('controller' => 'Users', 'action' => 'dashboard', 'admin' => false)); ?></li>
                         <li><?php echo $this->SideNav->LinkIcon('My Pings', 'fa fa-bolt', array('controller' => 'Projects', 'action' => 'myPings', 'admin' => false)); ?></li>
-                        <li><?php echo $this->SideNav->LinkIcon('Community', 'fa fa-globe', array('controller' => 'Projects', 'action' => 'community', 'admin' => false)); ?></li>
+                        <li><?php echo $this->SideNav->LinkIcon('My Communities', 'fa fa-globe', array('controller' => 'Communities', 'action' => 'index', 'admin' => false)); ?></li>
                         <?php if ($current_user['Group']['id'] == 1) : ?>
-                            <li><?php echo $this->SideNav->LinkIcon('Users', 'fa fa-users', array('controller' => 'Users', 'action' => 'index', 'admin' => true)); ?></li>
-                            <li><?php echo $this->SideNav->LinkIcon('Groups/Roles', 'fa fa-lemon-o', array('controller' => 'Groups', 'action' => 'index', 'admin' => true)); ?></li>
-                            <li><?php echo $this->SideNav->LinkIcon('Projects', 'fa fa-archive', array('controller' => 'Projects', 'action' => 'index', 'admin' => true)); ?></li>
-                            <li><?php echo $this->SideNav->LinkIcon('Comments', 'fa fa-comments', array('controller' => 'Comments', 'action' => 'index', 'admin' => true)); ?></li>
-                            <li><?php echo $this->SideNav->LinkIcon('Assets', 'fa fa-cloud', array('controller' => 'Assets', 'action' => 'index', 'admin' => true)); ?></li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-gears"></i>
+                                    <span>Admin Tools</span>
+                                    <i class="fa pull-right fa-angle-down"></i>
+                                </a>
+                                <ul class="treeview-menu" style="display: block;">
+                                    <li><?php echo $this->SideNav->LinkIcon('Users', 'fa fa-users', array('controller' => 'Users', 'action' => 'index', 'admin' => true)); ?></li>
+                                    <li><?php echo $this->SideNav->LinkIcon('Groups/Roles', 'fa fa-lemon-o', array('controller' => 'Groups', 'action' => 'index', 'admin' => true)); ?></li>
+                                    <li><?php echo $this->SideNav->LinkIcon('Projects', 'fa fa-archive', array('controller' => 'Projects', 'action' => 'index', 'admin' => true)); ?></li>
+                                    <li><?php echo $this->SideNav->LinkIcon('Comments', 'fa fa-comments', array('controller' => 'Comments', 'action' => 'index', 'admin' => true)); ?></li>
+                                    <li><?php echo $this->SideNav->LinkIcon('Assets', 'fa fa-cloud', array('controller' => 'Assets', 'action' => 'index', 'admin' => true)); ?></li>
+                                    <li><?php echo $this->SideNav->LinkIcon('Communities', 'fa fa-globe', array('controller' => 'Communities', 'action' => 'index', 'admin' => true)); ?></li>
+                                    <li><?php echo $this->SideNav->LinkIcon('ACL init', 'fa fa-gear', array('controller' => 'users', 'action' => 'ACLinit', 'admin' => true)); ?></li>
+                                </ul>
+                            </li>
                         <?php endif; ?>
                     </ul>
                 </section>

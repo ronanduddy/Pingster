@@ -216,11 +216,13 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             // authenticate user
             if ($this->Auth->login()) {
-                return $this->redirect($this->redirect($this->dashboard));
+                return $this->redirect($this->dashboard);
             } else {
                 $this->Session->setFlash('Sorry, invalid username or password. Please try again :)', 'Flashes/danger');
                 return false;
             }
+        } else {
+            return false;
         }
     }
 
@@ -282,6 +284,13 @@ class UsersController extends AppController {
 
     // log user out
     public function logout() {
+        //$this->Session->del();
+        $this->Session->setFlash('See you again :)', 'Flashes/success');
+        return $this->redirect($this->Auth->logout());
+    }
+
+    public function admin_logout() {
+        // $this->Session-del();
         $this->Session->setFlash('See you again :)', 'Flashes/success');
         return $this->redirect($this->Auth->logout());
     }
@@ -295,57 +304,58 @@ class UsersController extends AppController {
 
     public function isAuthorized($user) {
 
-        // if pingster
-        if ($user['Group']['id'] == 3) {
+        $group = $user['Group']['id'];
 
-            // 1 check if  pingster heads to dashboard, checkLoggedIn or logout
-            //  1.1 allow
-            // 2 check if pingster ties to edit password
-            //  2.1 deny if user does not own password
-            //  2.2 allow if user owns password 
-
-            if (in_array($this->action, array('dashboard', 'checkLoggedIn', 'logout', 'view'))) {
-                return true;
-            } elseif (in_array($this->action, array('edit', 'delete'))) {
-
-                $userId = (int) $this->request->params['pass'][0];
-
-                $options = array(
-                    'conditions' => array(
-                        'AND' => array(
-                            'User.id' => $userId
-                        )
-                    ),
-                );
-                $this->User->recursive = 0;
-                $result = $this->User->find('first', $options);
-
-                if ($result == null || $result['User']['id'] != $user['id']) {
-                    $this->Auth->authError = 'You can not edit or delete that profile, it is not yours';
-                    $this->Auth->unauthorizedRedirect = '/';
-                    return false;
-                }if ($result['User']['id'] == $user['id']) {
-                    $this->Auth->authError = false;
-                    return true;
-                }
-            } elseif (in_array($this->action, array('changePassword'))) {
-
-                $userId = (int) $this->request->params['pass'][0];
-
-                if ($userId != (int) $user['id']) {
-                    $this->Auth->authError = 'You can not edit that password, it is not yours';
-                    $this->Auth->unauthorizedRedirect = array('controller' => 'Users', 'action' => 'changePassword', $user['id']);
-                    return false;
-                } elseif ($userId == (int) $user['id']) {
-                    $this->Auth->authError = false;
-                    return true;
-                }
-            }
-        }// end if pingster
-        // for admin: 
-        elseif ($user['Group']['id'] == 1) {
+        // is admin
+        if ($group == 1) {
             return true;
         }
+
+        // if pingster
+        if ($group == 3 && in_array($this->action, array('dashboard', 'checkLoggedIn', 'logout', 'view'))) {
+            return true;
+        }
+
+        // if pingster
+        if ($group == 3 && in_array($this->action, array('edit', 'delete'))) {
+
+            // get user id from url
+            $userId = (int) $this->request->params['pass'][0];
+
+            $this->User->recursive = 0;
+
+            // find user
+            $result = $this->User->findByid($userId);
+
+            // if null or where returned user_id != current user id 
+            if ($result === null || $result['User']['id'] != $user['id']) {
+                $this->Auth->authError = 'You can not edit or delete that profile, it is not yours';
+                $this->Auth->unauthorizedRedirect = '/';
+                return false;
+            }
+
+            // if returned user id == current user id 
+            if ($result['User']['id'] == $user['id']) {
+                $this->Auth->authError = false;
+                return true;
+            }
+        } // end if
+        // if pingster
+        if ($group == 3 && in_array($this->action, array('changePassword'))) {
+
+            // get user id from url
+            $userId = (int) $this->request->params['pass'][0];
+
+            // if user id from url != current user id
+            if ($userId != (int) $user['id']) {
+                $this->Auth->authError = 'You can not edit that password, it is not yours';
+                $this->Auth->unauthorizedRedirect = array('controller' => 'Users', 'action' => 'changePassword', $user['id']);
+                return false;
+            } elseif ($userId == (int) $user['id']) {
+                $this->Auth->authError = false;
+                return true;
+            }
+        } // end if
 
         return parent::isAuthorized($user); // false
     }
@@ -359,34 +369,37 @@ class UsersController extends AppController {
         // 4 = guests
         // 5 = parents
         $group = $this->User->Group;
-//
-//        // allow admins to everything
+
+        // allow admins to everything
         $group->id = 1;
-//        $this->Acl->allow($group, 'controllers');
-//
-//        // allow pingsters to:
-//        $group->id = 3;
-//        $this->Acl->deny($group, 'controllers');
-//
-//        $this->Acl->allow($group, 'controllers/Projects/viewPing');
-//        $this->Acl->allow($group, 'controllers/Projects/myPings');
-//        $this->Acl->allow($group, 'controllers/Projects/addPing');
-//        $this->Acl->allow($group, 'controllers/Projects/editPing');
-//        $this->Acl->allow($group, 'controllers/Projects/delete');
-//        $this->Acl->allow($group, 'controllers/Projects/community');
-//
-//        $this->Acl->allow($group, 'controllers/Users/dashboard');
-//        $this->Acl->allow($group, 'controllers/Users/changePassword');
-//        $this->Acl->allow($group, 'controllers/Users/checkLoggedIn');
-//        $this->Acl->allow($group, 'controllers/Users/logout');
-//        $this->Acl->allow($group, 'controllers/Users/register');
-//
-//        $this->Acl->allow($group, 'controllers/Comments/commentOnPing');
-//        $this->Acl->allow($group, 'controllers/Comments/delete');
-//        
-//
-        echo "all done";
-        exit;
+        $this->Acl->allow($group, 'controllers');
+
+        // allow pingsters to:
+        $group->id = 3;
+        $this->Acl->deny($group, 'controllers');
+
+        $this->Acl->allow($group, 'controllers/Communities/index');
+        $this->Acl->allow($group, 'controllers/Communities/view');
+
+        $this->Acl->allow($group, 'controllers/Projects/viewPing');
+        $this->Acl->allow($group, 'controllers/Projects/myPings');
+        $this->Acl->allow($group, 'controllers/Projects/addPing');
+        $this->Acl->allow($group, 'controllers/Projects/editPing');
+        $this->Acl->allow($group, 'controllers/Projects/delete');
+        $this->Acl->allow($group, 'controllers/Projects/community');
+
+        $this->Acl->allow($group, 'controllers/Users/dashboard');
+        $this->Acl->allow($group, 'controllers/Users/changePassword');
+        $this->Acl->allow($group, 'controllers/Users/checkLoggedIn');
+        $this->Acl->allow($group, 'controllers/Users/logout');
+        $this->Acl->allow($group, 'controllers/Users/register');
+
+        $this->Acl->allow($group, 'controllers/Comments/commentOnPing');
+        $this->Acl->allow($group, 'controllers/Comments/delete');
+
+        $this->Session->setFlash('ACL initialised', 'Flashes/success');
+        $this->redirect(array('controller' => 'Users', 'action' => 'dashboard', 'admin' => false));
+        return true;
     }
 
 }
