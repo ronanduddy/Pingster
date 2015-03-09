@@ -10,15 +10,15 @@
         <div class="box-body">
             <p>
                 <?php
-                echo sprintf('Started by %s (%s) on the %s at %s ', 
+                echo sprintf('Started by %s (%s) on %s and ', 
                         $this->Html->link($project['User']['username'], array(
                             'controller' => 'users',
                             'action' => 'view',
                             h($project['User']['id'])
                         )),
                         h($project['ProjectsUser']['user_role']), 
-                        h(date("jS F, Y", strtotime($project['Project']['created']))), 
-                        h(date("g:ia", strtotime($project['Project']['created']))));
+                         $this->Time->niceShort($project['Project']['created'])
+                       );
 
                 if (!empty($community)) {
                     echo sprintf('and is a member of the %s community.', 

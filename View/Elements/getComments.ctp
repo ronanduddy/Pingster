@@ -17,7 +17,7 @@
                     <li class="time-label">
                         <span class="bg-blue-gradient"> 
                             <?php
-                            echo h(date("jS M. y", strtotime($comment['Comment']['created'])));
+                            echo $this->Time->timeAgoInWords($comment['Comment']['created'], array('format' => 'F jS, Y', 'end' => '+1 year'));
                             $day = date("d", strtotime($comment['Comment']['created']));
                             ?>
                         </span>
@@ -26,7 +26,7 @@
                     <li class="time-label">
                         <span class="bg-blue-gradient"> 
                             <?php
-                            echo h(date("jS M. y", strtotime($comment['Comment']['created'])));
+                            echo $this->Time->timeAgoInWords($comment['Comment']['created'], array('format' => 'F jS, Y', 'end' => '+1 year'));
                             $day = date("d", strtotime($comment['Comment']['created']));
                             ?>
                         </span>
@@ -39,7 +39,7 @@
                         <span class="time">
                             <small class="text-muted">
                                 <i class="fa fa-clock-o"></i> 
-                                <?php echo h(date("g:ia", strtotime($comment['Comment']['created']))); ?>
+                                <?php echo $this->Time->nice($comment['Comment']['created']); ?>
                             </small>
                         </span>
 
