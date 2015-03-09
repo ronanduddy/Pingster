@@ -163,8 +163,10 @@ class UsersController extends AppController {
         $projects = $this->User->Project->find('list');
         $this->set(compact('projects', 'users'));
 
+        $userId = (int) $this->request->params['pass'][0];
+
         $groups = $this->User->Group->find('list');
-        $this->set(compact('groups'));
+        $this->set(compact('groups', 'userId'));
     }
 
     /**
@@ -263,15 +265,19 @@ class UsersController extends AppController {
 
         if ($this->request->is(array('post', 'put'))) {
             if ($this->User->save($this->request->data)) {
-                $this->Session->setFlash('Your password has been changed', 'Flashes/success');
+                $this->Session->setFlash('I have changed the password', 'Flashes/success');
                 return $this->redirect(array('controller' => 'users', 'action' => 'view', $this->request->data['User']['id']));
             } else {
-                $this->Session->setFlash('We couldn\'t change your password. Please, try again.', 'Flashes/danger');
+                $this->Session->setFlash('I couldn\'t change the password. Please, try again.', 'Flashes/danger');
             }
         } else {
             $options = array('conditions' => array('User.id' => $id));
             $this->request->data = $this->User->find('first', $options);
         }
+    }
+
+    public function admin_changePassword($id = null) {
+        $this->changePassword($id);
     }
 
     // check if user is already logged in

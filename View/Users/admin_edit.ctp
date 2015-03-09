@@ -52,9 +52,6 @@ echo $this->Form->input('User.school', array(
 //                'class' => ''
 //            ));
 //            echo $this->Form->input('User.avatar_dir', array('type' => 'hidden'));
-// for user model:
-// update password
-// submit
 
 echo $this->element('Admin/foot', array(
     'showPaginate' => false,
@@ -64,6 +61,7 @@ echo $this->element('Admin/foot', array(
             'class' => 'btn btn-primary btn-flat',
             'div' => false,
         )),
+        $this->Html->link('Set user\'s password', array('controller' => 'Users', 'action' => 'changePassword', $userId), array('class' => 'btn btn-warning btn-flat', 'title' => 'Click to change this user\'s password')),
         $this->Form->end(),
     )
 ));
