@@ -52,21 +52,37 @@
             <?php
             // for Project model:
             // status
-            echo $this->Form->input('Project.status', array(
-                'options' => array(
-                    'private' => 'Private',
-                    'public' => 'Public'
-                ),
-                'label' => 'Visibility',
-            ));
-
-            echo $this->Form->input('Project.community', array(
-                'label' => 'Community',
-                'type' => 'select',
-                'options' => $communities,
-                'default' => 0,
-                'empty' => 'Where do you go?', 'selected' => 'Your Value'
-            ));
+             // if user in created ping from community: set to public
+            if (isset($namedParams['public'])) {
+                echo $this->Form->input('Project.status', array(
+                    'type' => 'hidden',
+                    'value' => 'public',
+                ));
+            } else {
+                echo $this->Form->input('Project.status', array(
+                    'options' => array(
+                        'private' => 'Private',
+                        'public' => 'Public'
+                    ),
+                    'label' => 'Visibility',
+                ));
+            }
+            
+            // if user in created ping from community
+            if (isset($namedParams['community'])) {
+                echo $this->Form->input('Project.community', array(
+                    'type' => 'hidden',
+                    'value' => (int) $namedParams['community'],
+                ));
+            } else {
+                echo $this->Form->input('Project.community', array(
+                    'label' => 'Community',
+                    'type' => 'select',
+                    'options' => $communities,
+                    'default' => 0,
+                    'empty' => 'Where do you go?', 'selected' => 'Your Value'
+                ));
+            }
 
 //            echo $this->Form->input('Tag.tag_content', array(
 //                'label' => 'Tag',

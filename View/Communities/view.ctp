@@ -1,4 +1,4 @@
-<?php //debug($projects);       ?>
+<?php //debug($community);        ?>
 <style>
     @media(max-width:767px){
         .masonryItem{
@@ -41,7 +41,7 @@
             <div class="box-footer">
                 <p style="text-align: right">
                     <?php
-                    echo $this->Html->link('Create new Ping', array('controller' => 'Projects', 'action' => 'addPing'), array('title' => 'Create a Ping project', 'class' => 'btn btn-success btn-lg'));
+                    echo $this->Html->link('Create new Ping', array('controller' => 'Projects', 'action' => 'addPing', 'public' => true, 'community' => $community['Community']['id']), array('title' => 'Create a Ping project', 'class' => 'btn btn-success btn-lg'));
                     ?>
                 </p>
             </div>
@@ -94,7 +94,7 @@
                     </div>                    
                     <p>This community hasn't any Pings yet</p>
                 </div>
-               
+
             </div>      
         </div>
     <?php endif; ?>

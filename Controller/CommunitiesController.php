@@ -46,7 +46,7 @@ class CommunitiesController extends AppController {
         // get name of community for view
         $options = array('conditions' => array(
                 'Community.' . $this->Community->primaryKey => $id),
-            'fields' => array('Community.name'),
+            'fields' => array('Community.name', 'Community.id'),
             'recursive' => -1,
         );
         $this->set('community', $this->Community->find('first', $options));

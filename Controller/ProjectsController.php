@@ -178,8 +178,13 @@ class ProjectsController extends AppController {
             }
         }
 
+        // if any parameters are being passed to controller
+        if (isset($this->request->params['named'])) {
+            $namedParams = $this->request->params['named'];
+        }
+
         $communities = $this->Project->Community->find('list');
-        $this->set(compact('user', 'communities'));
+        $this->set(compact('user', 'communities', 'namedParams'));
 //        $assets = $this->Project->Asset->find('list');
 //        $users = $this->Project->User->find('list');
 //        $this->set(compact('assets', 'users'));
