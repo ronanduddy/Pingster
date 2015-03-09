@@ -39,7 +39,7 @@
                         <span class="time">
                             <small class="text-muted">
                                 <i class="fa fa-clock-o"></i> 
-                                <?php echo $this->Time->nice($comment['Comment']['created']); ?>
+                                <?php echo $this->Time->niceshort($comment['Comment']['created']); ?>
                             </small>
                         </span>
 

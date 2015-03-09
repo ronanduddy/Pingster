@@ -17,11 +17,11 @@
                             h($project['User']['id'])
                         )),
                         h($project['ProjectsUser']['user_role']), 
-                         $this->Time->niceShort($project['Project']['created'])
+                         $this->Time->nice($project['Project']['created'])
                        );
 
                 if (!empty($community)) {
-                    echo sprintf('and is a member of the %s community.', 
+                    echo sprintf('is a member of the %s community.', 
                             $this->Html->link($community['Community']['name'], array(
                                 'controller' => 'communities',
                                 'action' => 'view',
