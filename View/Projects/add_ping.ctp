@@ -52,7 +52,7 @@
             <?php
             // for Project model:
             // status
-             // if user in created ping from community: set to public
+            // if user in created ping from community: set to public
             if (isset($namedParams['public'])) {
                 echo $this->Form->input('Project.status', array(
                     'type' => 'hidden',
@@ -67,7 +67,7 @@
                     'label' => 'Visibility',
                 ));
             }
-            
+
             // if user in created ping from community
             if (isset($namedParams['community'])) {
                 echo $this->Form->input('Project.community', array(
@@ -121,22 +121,18 @@
                     'class' => 'btn btn-primary',
                     'div' => false,
                 ));
-                echo $this->Html->link('Back', array('controller' => 'Projects', 'action' => 'myPings'), array('title' => 'Go back to the Ping page', 'class' => 'btn btn-default'));
+
+                if (isset($namedParams['community'])) {
+                    echo $this->Html->link('Back', array('controller' => 'communities', 'action' => 'view', $namedParams['community']), array('title' => 'Go back to your community', 'class' => 'btn btn-default'));
+                } else {
+                    echo $this->Html->link('Back', array('controller' => 'Projects', 'action' => 'myPings'), array('title' => 'Go back to the Ping page', 'class' => 'btn btn-default'));
+                }
 
                 // end
                 echo $this->Form->end();
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="alert alert-info alert-dismissable">
-        <i class="fa fa-info"></i>
-        <button class="close" aria-hidden="true" data-dismiss="alert" type="button">×</button>
-        <b>Did you know</b>
-        <p>
-            To showcase your Ping, set it's visibility to public. That way it can be seen in the community by everyone.
-        </p>
     </div>
 
 </div>

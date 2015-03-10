@@ -1,4 +1,4 @@
-<?php //debug($communities);  ?>
+<?php //debug($communities);    ?>
 <div class="col-lg-6 col-lg-offset-3">
     <div class="box box-primary">
         <div class="box-header">
@@ -47,12 +47,12 @@
                 ),
                 'label' => 'Visibility',
             ));
-            
+
             echo $this->Form->input('Project.community', array(
                 'label' => 'Community',
                 'type' => 'select',
                 'options' => $communities,
-                'empty'=> 'Choose a community',
+                'empty' => 'Choose a community',
             ));
 
 //            echo $this->Form->input('Tag.tag_content', array(
@@ -88,20 +88,11 @@
                     'div' => false,
                 ));
                 echo $this->Html->link('Back', array('controller' => 'Projects', 'action' => 'viewPing', $this->params['pass'][0]), array('title' => 'Go back to the Ping page', 'class' => 'btn btn-default'));
-                // end
+// end
                 echo $this->Form->end();
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="alert alert-info alert-dismissable">
-        <i class="fa fa-info"></i>
-        <button class="close" aria-hidden="true" data-dismiss="alert" type="button">×</button>
-        <b>Did you know</b>
-        <p>
-            To showcase your Ping, set it's visibility to public. That way it can be seen in the community by everyone.
-        </p>
     </div>
 
 </div>

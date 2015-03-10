@@ -30,6 +30,18 @@ class CommunitiesController extends AppController {
             'recursive' => -1
         );
         $this->set('communities', $this->Paginator->paginate());
+
+//        $options = array(
+//            'fields' => array('*', 'COUNT(CommunitiesProject.project_id) as TotalProjects'),
+//            'group' => 'CommunitiesProject.community_id',
+//            'recursive' => 0
+//,        );
+        $options = array(
+            //  'fields' => array('*', 'COUNT(CommunitiesProject.project_id) as TotalProjects'),
+            'fields' => array('*',),
+            // 'group' => 'CommunitiesProject.community_id',
+            'recursive' => 1
+                ,);
     }
 
     /**

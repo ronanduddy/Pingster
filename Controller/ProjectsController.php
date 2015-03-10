@@ -371,9 +371,7 @@ class ProjectsController extends AppController {
             $this->Session->setFlash('The project could not be deleted. Please, try again.', 'Flashes/warning');
         }
 
-        if ($user['group_id'] == 1) {
-            return $this->redirect(array('controller' => 'projects', 'action' => 'index'));
-        }
+
 
         // redirect to ping or team up page going by data in POST
         if ($this->request->query['kind'] === 'ping') {

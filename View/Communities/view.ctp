@@ -1,4 +1,4 @@
-<?php //debug($community);        ?>
+<?php //debug($community);          ?>
 <style>
     @media(max-width:767px){
         .masonryItem{
@@ -68,6 +68,11 @@
                     </div>
 
                     <div class="box-footer">
+                        <span class="pull-left">
+                            <small class="badge pull-right bg-yellow"></small>
+                            <small class="badge pull-right bg-blue"></small>
+                            <small class="badge pull-right bg-red"></small>
+                        </span>
                         <p style="text-align: right">
                             <?php
                             echo $this->Html->link('View', array('controller' => 'Projects', 'action' => 'viewPing', $project['Project']['id']), array('title' => 'View this Ping', 'class' => 'btn btn-primary'));
