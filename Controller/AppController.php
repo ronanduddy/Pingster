@@ -38,8 +38,10 @@ class AppController extends Controller {
     public $helpers = array(
         'Form' => array('className' => 'BootstrapForm'),
         'Html' => array('className' => 'SideNav'),
+        'Js'
     );
     public $components = array(
+        'RequestHandler',
         'Amazonsdk.Amazon',
         'Session',
         'Acl',

@@ -1,4 +1,4 @@
-<?php //debug($data);          ?>
+<?php //debug($data);            ?>
 <style>
     @media(max-width:767px){
         .masonryItem{
@@ -63,9 +63,17 @@
 
                 <div class="box-body">
 
-                    <div class="thumbnail">
-                        <?php //echo $this->Html->image($projectData['Project']['image_url'], array('class' => 'lazy', 'data-original' => $projectData['Project']['image_url'])); ?>
-                        <h1 style="text-align: center"><i class="fa fa-globe"></i></h1>
+                    <div class="thumbnail" style="height:200px;">
+                        <?php
+                        echo $this->Html->image(
+                               null, array(
+                            'data-src' => 'holder.js/100%x100%/random/text:' . h(str_replace(' ', ' \n ', $community['Community']['name'])),
+                            'url' => array(
+                                'controller' => 'communities',
+                                'action' => 'view',
+                                $community['Community']['id']
+                        )));
+                        ?>
                     </div>
                 </div>
 

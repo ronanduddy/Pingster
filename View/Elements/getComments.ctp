@@ -56,8 +56,27 @@
 
                         <div class="timeline-body" style="border-bottom: 1px solid #f4f4f4">
                             <?php if ($comment['Comment']['asset_id'] != null) : ?>
-                                <div class="thumbnail">
-                                    <img style="width: auto; height: 150px;" src="<?php echo h($comment['Asset']['asset_url']); ?>" />
+                                <div class="thumbnail" style="height:300px;">
+                                    <?php
+                                    // get path info => extension
+                                    $pathinfo = pathinfo($comment['Asset']['asset_url']);
+                                    ?>
+                                    <?php if (in_array(strtolower($pathinfo['extension']), array('jpg', 'jpeg', 'gif', 'png', 'apng', 'svg', 'bmp', 'ico'))) : ?>
+                                        <?php
+                                        echo $this->Html->image(
+                                                $comment['Asset']['asset_url'], array(
+                                            'class' => 'lazy',
+                                            'data-original' => $comment['Asset']['asset_url']
+                                        ));
+                                        ?>
+                                    <?php else: ?>
+                                        <?php
+                                        echo $this->Html->image(
+                                                null, array(
+                                            'data-src' => 'holder.js/100%x100%/random/text:' . h(str_replace(' ', ' \n ', $comment['Asset']['asset']))
+                                        ));
+                                        ?>
+                                    <?php endif; ?>                                   
                                 </div>
                             <?php endif; ?>
                             <p class="message">                    

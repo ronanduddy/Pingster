@@ -1,4 +1,4 @@
-<?php //debug($data);    ?>
+<?php //debug($data);           ?>
 <style>
     @media(max-width:767px){
         .masonryItem{
@@ -63,49 +63,78 @@
 
                     <div class="box-body">
 
-                        <div class="thumbnail">
-                            <?php echo $this->Html->image($projectData['Project']['image_url'], array('class' => 'lazy', 'data-original' => $projectData['Project']['image_url'])); ?>
-                        </div>
-                        <?php if ($projectData['Tag'] != null) : ?>
-                            <?php foreach ($projectData['Tag'] as $tag) : ?>
-                                <?php echo '<br>#' . h($tag['tag_content']); ?>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </div>
 
-                    <div class="box-footer">
-                        <p style="text-align: right">
-                            <?php
-                            echo $this->Html->link('View', array('controller' => 'Projects', 'action' => 'viewPing', $projectData['Project']['id']), array('title' => 'View this Ping', 'class' => 'btn btn-primary'));
-                            ?>
-                        </p>
-                    </div>
-                </div>      
-            </div>
-
-        <?php endforeach; ?>
-    <?php endif; ?>
-
-    <div class="masonryItem">
-        <div class="box box-info">
-            <div class="box-body">
-                <p>
-                    <?php
-                    echo $this->Paginator->counter(array(
-                        'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
-                    ));
-                    ?>	</p>
-                <nav>
-                    <ul class="pagination btn-group">
                         <?php
-                        echo $this->Paginator->prev('< ' . __('previous'), array('tag' => 'li'), null, array('class' => 'btn btn-default disabled'));
-                        echo $this->Paginator->numbers(array('separator' => '', 'tag' => 'li', 'currentClass' => 'btn btn-default'));
-                        echo $this->Paginator->next(__('next') . ' >', array('tag' => 'li'), null, array('class' => 'btn btn-default disabled'));
+                        // get path info => extension
+                        $pathinfo = pathinfo($projectData['Project']['image_url']);
                         ?>
-                    </ul>
-                </nav>
+                        <?php if (in_array(strtolower($pathinfo['extension']), array('jpg', 'jpeg', 'gif', 'png', 'apng', 'svg', 'bmp', 'ico'))) : ?>
+                            <div class="thumbnail">
+                                <?php
+                                echo $this->Html->image(
+                                        $projectData['Project']['image_url'], array(
+                                    'class' => 'lazy',
+                                    'data-original' => $projectData['Project']['image_url'],
+                                    'url' => array(
+                                        'controller' => 'Projects',
+                                        'action' => 'viewPing',
+                                        $projectData['Project']['id']
+                                )));
+                                ?>
+                            <?php else: ?>
+                                <div class="thumbnail" style="height:200px;">
+                                    <?php
+                                    echo $this->Html->image(
+                                            null, array(
+                                        'data-src' => 'holder.js/100%x100%/random/text:' . h(str_replace(' ', ' \n ', $projectData['Project']['title'])),
+                                        'url' => array(
+                                            'controller' => 'Projects',
+                                            'action' => 'viewPing',
+                                            $projectData['Project']['id']
+                                    )));
+                                    ?>
+                                <?php endif; ?>
+                            </div>
+                            <?php if ($projectData['Tag'] != null) : ?>
+                                <?php foreach ($projectData['Tag'] as $tag) : ?>
+                                    <?php echo '<br>#' . h($tag['tag_content']); ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="box-footer">
+                            <p style="text-align: right">
+                                <?php
+                                echo $this->Html->link('View', array('controller' => 'Projects', 'action' => 'viewPing', $projectData['Project']['id']), array('title' => 'View this Ping', 'class' => 'btn btn-primary'));
+                                ?>
+                            </p>
+                        </div>
+                    </div>      
+                </div>
+
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+        <div class="masonryItem">
+            <div class="box box-info">
+                <div class="box-body">
+                    <p>
+                        <?php
+                        echo $this->Paginator->counter(array(
+                            'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
+                        ));
+                        ?>	</p>
+                    <nav>
+                        <ul class="pagination btn-group">
+                            <?php
+                            echo $this->Paginator->prev('< ' . __('previous'), array('tag' => 'li'), null, array('class' => 'btn btn-default disabled'));
+                            echo $this->Paginator->numbers(array('separator' => '', 'tag' => 'li', 'currentClass' => 'btn btn-default'));
+                            echo $this->Paginator->next(__('next') . ' >', array('tag' => 'li'), null, array('class' => 'btn btn-default disabled'));
+                            ?>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>

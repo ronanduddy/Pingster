@@ -1,4 +1,4 @@
-<?php //debug($community);        ?>
+<?php //debug($community);           ?>
 <div class="col-lg-6">
     <div class="box box-primary">
         <div class="box-header">
@@ -29,7 +29,26 @@
                 ?>
             </p>
             <div class="thumbnail">
-                <?php echo $this->Html->image($project['Project']['image_url']); ?>
+                <?php
+                // get path info => extension
+                $pathinfo = pathinfo($project['Project']['image_url']);
+                ?>
+                <?php if (in_array(strtolower($pathinfo['extension']), array('jpg', 'jpeg', 'gif', 'png', 'apng', 'svg', 'bmp', 'ico'))) : ?>
+                    <?php
+                    echo $this->Html->image(
+                            $project['Project']['image_url'], array(
+                        'class' => 'lazy',
+                        'data-original' => $project['Project']['image_url']
+                    ));
+                    ?>
+                <?php else: ?>
+                    <?php
+                    echo $this->Html->image(
+                            null, array(
+                        'data-src' => 'holder.js/100%x300/random/text:' . h(str_replace(' ', ' \n ', $project['Project']['title']))
+                    ));
+                    ?>
+                <?php endif; ?>
             </div>
             <p><?php echo h($project['Project']['description']); ?></p>
         </div>
