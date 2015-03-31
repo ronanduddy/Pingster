@@ -305,7 +305,7 @@ class UsersController extends AppController {
 
     // This callback is executed before the action
     public function beforeFilter() {
-        $this->Auth->allow();
+       // $this->Auth->allow();
         $this->Auth->authorize = 'Controller';
         parent::beforeFilter();
     }
