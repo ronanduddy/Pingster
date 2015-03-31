@@ -98,8 +98,12 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             $this->User->create();
 
+            // get id for pingsters group
+            $this->User->Group->recursive = -1;
+            $pingsters = $this->User->Group->findByName('pingsters', array('fields' => 'Group.id'));
+
             // set to group id for pingster user
-            $this->request->data['User']['group_id'] = 3;
+            $this->request->data['User']['group_id'] = (int) $pingsters['Group']['id'];
 
             if ($this->User->save($this->request->data)) {
 
@@ -290,40 +294,38 @@ class UsersController extends AppController {
 
     // log user out
     public function logout() {
-        //$this->Session->del();
         $this->Session->setFlash('See you again :)', 'Flashes/success');
         return $this->redirect($this->Auth->logout());
     }
 
     public function admin_logout() {
-        // $this->Session-del();
         $this->Session->setFlash('See you again :)', 'Flashes/success');
         return $this->redirect($this->Auth->logout());
     }
 
     // This callback is executed before the action
     public function beforeFilter() {
-
+        $this->Auth->allow();
         $this->Auth->authorize = 'Controller';
         parent::beforeFilter();
     }
 
     public function isAuthorized($user) {
 
-        $group = $user['Group']['id'];
+        $group = $user['Group']['name'];
 
         // is admin
-        if ($group == 1) {
+        if ($group == 'admins') {
             return true;
         }
 
         // if pingster
-        if ($group == 3 && in_array($this->action, array('dashboard', 'checkLoggedIn', 'logout', 'view'))) {
+        if ($group == 'pingsters' && in_array($this->action, array('dashboard', 'checkLoggedIn', 'logout', 'view'))) {
             return true;
         }
 
         // if pingster
-        if ($group == 3 && in_array($this->action, array('edit', 'delete'))) {
+        if ($group == 'pingsters' && in_array($this->action, array('edit', 'delete'))) {
 
             // get user id from url
             $userId = (int) $this->request->params['pass'][0];
@@ -347,7 +349,7 @@ class UsersController extends AppController {
             }
         } // end if
         // if pingster
-        if ($group == 3 && in_array($this->action, array('changePassword'))) {
+        if ($group == 'pingsters' && in_array($this->action, array('changePassword'))) {
 
             // get user id from url
             $userId = (int) $this->request->params['pass'][0];
@@ -377,11 +379,11 @@ class UsersController extends AppController {
         $group = $this->User->Group;
 
         // allow admins to everything
-        $group->id = 1;
+        $group->id = 2;
         $this->Acl->allow($group, 'controllers');
 
         // allow pingsters to:
-        $group->id = 3;
+        $group->id = 1;
         $this->Acl->deny($group, 'controllers');
 
         $this->Acl->allow($group, 'controllers/Communities/index');

@@ -33,7 +33,7 @@ echo $this->Form->input('User.username', array(
 // for user model:
 // user group_id 
 echo $this->Form->hidden('User.group_id', array(
-    'value' => 3, // for pingster
+    'value' => 8, // for pingster
 ));
 
 // for user model:

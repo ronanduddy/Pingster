@@ -197,7 +197,7 @@ class CommentsController extends AppController {
 
         if ($assetID['Comment']['asset_id'] != null) {
             $asset = $this->Comment->Asset->findById($assetID['Comment']['asset_id']);
-            
+
             // saved to pingster/user/project/asset/image.png
             $assetPath = sprintf('%s/%s/%s/%s', $asset['Asset']['user_id'], $asset['Comment']['project_id'], $asset['Comment']['asset_id'], $asset['Asset']['asset']);
 
@@ -238,8 +238,10 @@ class CommentsController extends AppController {
 
     public function isAuthorized($user) {
 
+        $group = $user['Group']['name'];
+
         // if pingster tries to edit or delete comment not theirs:
-        if ($user['Group']['id'] == 3) {
+        if ($group == 'pingsters') {
 
             // 1 check if pingster ties to edit or delete comment
             //  1.1 deny if user does not own comment
@@ -307,7 +309,7 @@ class CommentsController extends AppController {
             }
         }// end if pingster
         // for admin: 
-        elseif ($user['Group']['id'] == 1) {
+        elseif ($group == 'admins') {
             return true;
         }
 

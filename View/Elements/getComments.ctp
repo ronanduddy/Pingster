@@ -56,7 +56,7 @@
 
                         <div class="timeline-body" style="border-bottom: 1px solid #f4f4f4">
                             <?php if ($comment['Comment']['asset_id'] != null) : ?>
-                                <div class="thumbnail" style="height:300px;">
+                                <div class="thumbnail" style="height:auto;">
                                     <?php
                                     // get path info => extension
                                     $pathinfo = pathinfo($comment['Asset']['asset_url']);
@@ -90,10 +90,10 @@
                                 if ($comment['Comment']['asset_id'] != null) {
                                     echo $this->Html->link('Download ' . $comment['Asset']['asset'], $comment['Asset']['asset_url'], array('class' => 'btn btn-primary pull-left', 'target' => '_blank', 'title' => 'Download ' . $comment['Asset']['asset_url']));
                                 }
-                                if ($current_user['id'] == $comment['Comment']['user_id'] || $current_user['Group']['id'] == 1) {
+                                if ($current_user['id'] == $comment['Comment']['user_id'] || $current_user['Group']['name'] == 'admins') {
                                     echo $this->Form->postLink(__('Delete'), array('controller' => 'comments', 'action' => 'delete', $comment['Comment']['id'], '?' => array('projectId' => $project['Project']['id'], 'kind' => $project['Project']['kind'])), array('class' => 'btn btn-danger pull-right'), __('Are you sure you want to delete this comment & asset?', $comment['Comment']['id']));
                                 } else {
-                                    if ($current_user['id'] == $comment['Comment']['user_id'] || $current_user['Group']['id'] == 1) {
+                                    if ($current_user['id'] == $comment['Comment']['user_id'] || $current_user['Group']['name'] == 'admins') {
                                         echo $this->Form->postLink(__('Delete'), array('controller' => 'comments', 'action' => 'delete', $comment['Comment']['id'], '?' => array('projectId' => $project['Project']['id'], 'kind' => $project['Project']['kind'])), array('class' => 'btn btn-danger pull-right'), __('Are you sure you want to delete this comment?', $comment['Comment']['id']));
                                     }
                                 }

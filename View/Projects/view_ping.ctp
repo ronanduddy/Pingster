@@ -56,7 +56,7 @@
             <div class="btn-group" >
                 <?php
 // if owner or admin
-                if ($current_user['id'] == $project['ProjectsUser']['user_id'] || $current_user['Group']['id'] == 1) {
+                if ($current_user['id'] == $project['ProjectsUser']['user_id'] || $current_user['Group']['name'] == 'admins') {
                     echo $this->Html->link('Edit Ping', array('controller' => 'Projects', 'action' => 'editPing', $project['Project']['id']), array('title' => 'Edit this Ping?', 'class' => 'btn btn-primary'));
                     echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->params['pass'][0], '?' => array('kind' => $project['Project']['kind'])), array('title' => 'Delete this Ping', 'class' => 'btn btn-danger'), __('Are you sure you want to delete me!?'));
                 }

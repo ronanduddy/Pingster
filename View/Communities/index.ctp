@@ -41,7 +41,7 @@
             <div class="box-footer">
                 <p style="text-align: right">
                     <?php
-                    if ($current_user['Group']['id'] == 1) {
+                    if ($current_user['Group']['name'] == 'admins') {
                         echo $this->Html->link('Create new community', array('controller' => 'communities', 'action' => 'add', 'admin' => true), array('title' => 'Create a Community', 'class' => 'btn btn-success btn-lg'));
                     }
                     ?>

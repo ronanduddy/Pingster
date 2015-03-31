@@ -392,8 +392,10 @@ class ProjectsController extends AppController {
 
     public function isAuthorized($user) {
 
+        $group = $user['Group']['name'];
+        
         // if pingster tries to edit or delete ping not theirs:
-        if ($user['Group']['id'] == 3) {
+        if ($group == 'pingsters') {
 
             // 1 check if pingster ties to edit or delete project
             //  1.1 deny if user does not own project
@@ -470,7 +472,7 @@ class ProjectsController extends AppController {
             }
         }// end if pingster
         // for admin: 
-        elseif ($user['Group']['id'] == 1) {
+        elseif ($group == 'admins') {
             return true;
         }
 

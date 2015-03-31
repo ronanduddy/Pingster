@@ -35,7 +35,7 @@
             // for user model:
             // user group
             // don't want pingsters to change groups
-            if($current_user['Group']['id'] == 1) {
+            if($current_user['Group']['name'] == 'admins') {
                 echo $this->Form->input('User.group_id', array(
                     'label' => 'You are a member of',
                 ));

@@ -110,7 +110,7 @@ class AppController extends Controller {
         // located in UsersController.php - ACLinit()
         // Only admins can access admin functions
         if (isset($this->request->params['admin'])) {
-            return (bool) ($user['Group']['id'] == 1);
+            return (bool) ($user['Group']['name'] == 'admin');
         }
 
         return false;

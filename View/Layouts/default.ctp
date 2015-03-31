@@ -80,7 +80,7 @@
                         <li><?php echo $this->SideNav->LinkIcon('Dashboard', 'fa fa-dashboard', array('controller' => 'Users', 'action' => 'dashboard', 'admin' => false)); ?></li>
                         <li><?php echo $this->SideNav->LinkIcon('My Pings', 'fa fa-bolt', array('controller' => 'Projects', 'action' => 'myPings', 'admin' => false)); ?></li>
                         <li><?php echo $this->SideNav->LinkIcon('My Communities', 'fa fa-globe', array('controller' => 'Communities', 'action' => 'index', 'admin' => false)); ?></li>
-                        <?php if ($current_user['Group']['id'] == 1) : ?>
+                        <?php if ($current_user['Group']['name'] == 'admins') : ?>
                             <li class="treeview">
                                 <a href="#">
                                     <i class="fa fa-gears"></i>
@@ -94,7 +94,7 @@
                                     <li><?php echo $this->SideNav->LinkIcon('Comments', 'fa fa-comments', array('controller' => 'Comments', 'action' => 'index', 'admin' => true)); ?></li>
                                     <li><?php echo $this->SideNav->LinkIcon('Assets', 'fa fa-cloud', array('controller' => 'Assets', 'action' => 'index', 'admin' => true)); ?></li>
                                     <li><?php echo $this->SideNav->LinkIcon('Communities', 'fa fa-globe', array('controller' => 'Communities', 'action' => 'index', 'admin' => true)); ?></li>
-                                    <li><?php echo $this->SideNav->LinkIcon('ACL init', 'fa fa-gear', array('controller' => 'users', 'action' => 'ACLinit', 'admin' => true)); ?></li>
+                                    <li><?php echo $this->SideNav->LinkIcon('iACL', 'fa fa-gear', array('controller' => 'i_acl', 'action' => 'static_pages', 'admin' => false)); ?></li>                                                                                                    
                                 </ul>
                             </li>
                         <?php endif; ?>
