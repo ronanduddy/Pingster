@@ -55,6 +55,12 @@
                 'empty' => 'Choose a community',
             ));
 
+            echo $this->Form->input('Project.tags', array(
+                'class' => 'form-control',
+                'maxlength' => '140',
+                'placeholder' => 'Adventure, Game, Fun, Space'
+            ));
+
 //            echo $this->Form->input('Tag.tag_content', array(
 //                'label' => 'Tag',
 //            ));

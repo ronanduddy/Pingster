@@ -287,12 +287,16 @@ class CommentsController extends AppController {
                     ),
                 );
 
-                $result = $this->Comment->Project->find('first', $options);
+                $results = $this->Comment->Project->find('first', $options);
 
                 // if owner & same user id return true
-                if ($result['ProjectsUser'][0]['user_role'] === 'owner' && $result['ProjectsUser'][0]['user_id'] == $user['id']) {
-                    return true;
+                foreach($results['ProjectsUser'] as $result){
+
+                    if($result['user_id'] == $user['id']){
+                        return true;
+                    }
                 }
+
                 // if public, return true (any one can view
                 if ($result['Project']['status'] === 'public') {
                     return true;
