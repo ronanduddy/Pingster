@@ -1,13 +1,3 @@
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-<script>
-$(document).ready(function() {
-    $('#notification_url').click(function(){
-        $.ajax({
-            url: "/Notification/markAllRead"
-        });
-    });
-});
-</script>
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,6 +8,7 @@ $(document).ready(function() {
         <?php
         // get header styles, scripts and meta
         echo $this->element('headerStylesScripts');
+        echo $this->Html->css('notifications');
         ?>
         <style>
             /*Fix for user dropdown on header navbar (uptodate bootstrap overrides this)*/
@@ -43,6 +34,18 @@ $(document).ready(function() {
                 display:inline;
             }
         </style>
+
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+
+        <script>
+        $(document).ready(function() {
+            $('#notification_url').click(function(){
+                $.ajax({
+                    url: "/Notifications/markAllRead"
+                });
+            });
+        });
+        </script>
     </head>
 
     <body class="skin-blue">
@@ -75,18 +78,16 @@ $(document).ready(function() {
                             <span class="label <?php if (count($Notifications) > 0) { echo "label-warning"; }?>"><?php echo count($Notifications); ?></span>
                           </a>
                           <ul class="dropdown-menu">
-                            <div class="notification-heading">
                                 <h4 class="menu-title">Notifications</h4>
-                            </div>
                             <li>
                               <!-- inner menu: contains the actual data -->
                               <ul class="menu">
                                 <li>
                                 <?php foreach($Notifications as $Notification): ?>
-                                   <div>
+                                   <li class="notification-item">
                                     <h4 class="item-title"><i class="ion ion-ios-people info"></i><?php echo $Notification['Notification']['message'];?></h4>
                                     <p class="item-info"><?php echo $Notification['Notification']['created']; ?></p>
-                                  </div>
+                                  </li>
                                   <?php endforeach;?>
                                 </li>
                               </ul>
