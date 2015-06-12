@@ -32,7 +32,7 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 
-    public $s3_bucket = 'pingsterdev';
+    public $s3_bucket = 'pingster';
     // this is for all controllers to have access to the dashboard url:
     public $dashboard = array('controller' => 'users', 'action' => 'dashboard');
     public $helpers = array(
@@ -91,18 +91,22 @@ class AppController extends Controller {
 
     // This callback is executed before an action
     public function beforeFilter() {
-
-//        $this->Security->blackHoleCallback = 'blackhole';
-//        $this->Security->requireSecure();
-//        $this->Security->csrfCheck = false;
-//        $this->Security->csrfExpires = '+1 hour';
-//        $this->Security->requireAuth();
 //        
         // all login, register and display actions to all
         $this->Auth->allow('display', 'login', 'logout', 'register');
 
+        $user = $this->Auth->user();
+
+        App::import('Controller', 'Notifications');
+        $NotificationsController = new NotificationsController();
+        $notifications = $NotificationsController->Notification->getList($user['id'], 10, true);
         // send user data to view. send entire user record.
-        $this->set('current_user', $this->Auth->user());
+        $this->set('current_user', $user);
+        $this->set('Notifications', $notifications);
+    }
+
+    public function beforeController() {
+        echo "test";
     }
 
     public function isAuthorized($user) {

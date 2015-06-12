@@ -13,6 +13,46 @@ class ProjectsController extends AppController {
 
     public $components = array('Paginator', 'Session');
 
+    public function myTeamUps($id=null) {
+
+        $this->myProjects($id, "team_up");
+    }
+
+    public function viewTeamUp($id = null){
+
+        $this->viewProject($id);
+    }
+
+    public function addTeamUp() {
+
+        $this->addProject('team_up');
+    }
+
+    public function editTeamUp($id=null){
+
+        $this->editProject($id, 'team_up');
+    }
+    public function myPings($id=null) {
+
+        $this->myProjects($id, 'ping');
+    }
+
+    public function viewPing($id = null){
+
+        $this->viewProject($id);
+    }
+
+    public function addPing($id=null){
+
+        $this->addProject('ping');
+    }
+
+    public function editPing($id=null){
+
+        $this->editProject($id);
+    }
+
+
     public function index() {
         $this->Project->recursive = 0;
         $this->set('projects', $this->Paginator->paginate());
@@ -39,13 +79,14 @@ class ProjectsController extends AppController {
     }
 
     // list all of the user's pings
-    public function myPings($id = null) {
+    public function myProjects($id = null, $kind="ping") {
         // get user from auth object. 
         $user = $this->Auth->user();
 
         $order = 'Project.created DESC';
         $joins = $this->Project->generateHabtmJoin('User', 'INNER');
-        $conditions = array('User.id' => $user['id']);
+        $conditions = array('User.id' => $user['id'],
+                            'kind' => $kind);
         $limit = 10;
 
         $this->paginate = compact('joins', 'conditions', 'order', 'limit');
@@ -54,7 +95,7 @@ class ProjectsController extends AppController {
     }
 
     // view ping's data
-    public function viewPing($id = null) {
+    public function viewProject($id = null) {
 
         if (!$this->Project->exists($id)) {
             throw new NotFoundException('Invalid project');
@@ -106,6 +147,34 @@ class ProjectsController extends AppController {
             $this->Project->CommunitiesProject->Community->recursive = -1;
             $this->set('community', $this->Project->CommunitiesProject->Community->findById($CommunitiesProject['CommunitiesProject']['community_id']));
         }
+
+        $options = array(
+            'conditions' => array(
+                'AND' => array(
+                    'ProjectsUser.project_id' => $id
+                ),
+            ),
+            'fields' => array(
+                'ProjectsUser.user_id',
+                'ProjectsUser.accepted_invitation'
+            )
+        );
+
+        $this->Project->ProjectsUser->recursive = 2;
+        $ProjectMembers = $this->Project->ProjectsUser->find('list', $options);
+        $ProjectUsers = array();
+        if(!empty($ProjectMembers)){
+
+            foreach(array_keys($ProjectMembers) as $member){
+                $this->Project->User->recursive = -1;
+                $user = $this->Project->User->findById($member);
+                $user['User']['accepted_invitation'] = $ProjectMembers[$member];
+                $ProjectUsers[] = $user['User'];
+            }
+
+            $this->set('ProjectUsers', $ProjectUsers);
+        }
+
     }
 
     public function admin_add() {
@@ -113,7 +182,7 @@ class ProjectsController extends AppController {
     }
 
     // adds a ping 
-    public function addPing() {
+    public function addProject($kind='ping') {
         $user = $this->Auth->user();
 
         if ($this->request->is('post')) {
@@ -127,6 +196,7 @@ class ProjectsController extends AppController {
 
                 $this->request->data['Project']['image_url'] = null;
                 $this->request->data['Project']['image'] = null;
+                $this->request->data['Project']['kind'] = $kind;
 
                 if ($this->Project->saveAssociated($this->request->data)) {
 
@@ -159,17 +229,52 @@ class ProjectsController extends AppController {
                     $this->Project->save();
 
                     // community project is member of
-                    $community_id = $this->request->data['Project']['community'];
-                    if (isset($community_id) && $community_id != NULL) {
-                        $this->Project->CommunitiesProject->create();
-                        $this->Project->CommunitiesProject->save(array('project_id' => $this->Project->id, 'community_id' => $community_id));
+                    if ($kind == 'ping') {
+
+                        $community_id = $this->request->data['Project']['community'];
+                        if (isset($community_id) && $community_id != NULL) {
+                            $this->Project->CommunitiesProject->create();
+                            $this->Project->CommunitiesProject->save(array('project_id' => $this->Project->id, 'community_id' => $community_id));
+                        }
+                    }
+                    elseif ($kind == 'team_up') {
+
+                        if (isset($this->request->data['Project']['user_ids'])){
+
+                            $project_members = explode(',',$this->request->data['Project']['user_ids']);
+                            $owner = $this->Auth->user();
+
+                            foreach($project_members as $member){
+
+                                if($user_id = intval($member)){
+
+                                    $this->Project->ProjectsUser->create();
+                                    $this->Project->ProjectsUser->save(
+                                        array(
+                                            'project_id' => $this->Project->id,
+                                            'user_id' => $user_id,
+                                            'user_role' => 'collaborator',
+                                            'accepted_invitation' => 0
+                                        )
+                                    );
+
+
+                                    $url = '/Projects/viewTeamUp/' . $this->Project->id;
+                                    $message = $owner['username'] . " wants to team up! <a id='notification_url' href='".$url."'>Check it out!</a>";
+                                    $this->Project->User->Notification->msg($user_id, $message);
+
+                                }
+                            }
+                        }
                     }
 
+
                     $this->Session->setFlash('Ping created.', 'Flashes/success');
+                    $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
                     if ($user['group_id'] == 1) {
-                        return $this->redirect(array('action' => 'viewPing', $this->Project->id, 'admin' => false));
+                        return $this->redirect(array('action' => $action, $this->Project->id, 'admin' => false));
                     } else {
-                        return $this->redirect(array('action' => 'viewPing', $this->Project->id));
+                        return $this->redirect(array('action' => $action, $this->Project->id));
                     }
                 }
             } else {
@@ -183,6 +288,16 @@ class ProjectsController extends AppController {
             $namedParams = $this->request->params['named'];
         }
 
+        if($kind == 'team_up'){
+
+           $users = $this->Project->User->find(
+           'list',
+            array(
+                'fields' => array('User.username'),
+                'recursive' => 0
+            ));
+           $this->set(compact('user', 'users', 'params'));
+        }
         $communities = $this->Project->Community->find('list');
         $this->set(compact('user', 'communities', 'namedParams'));
 //        $assets = $this->Project->Asset->find('list');
@@ -198,7 +313,7 @@ class ProjectsController extends AppController {
         $this->editPing($id);
     }
 
-    public function editPing($id = null) {
+    public function editProject($id = null, $kind = 'ping') {
         $user = $this->Auth->user();
 
         if (!$this->Project->exists($id)) {
@@ -206,11 +321,12 @@ class ProjectsController extends AppController {
         }
 
         if ($this->request->is(array('post', 'put'))) {
+
+            $project = $this->Project->findById($id);
             //   debug($this->request); exit();
             if ($this->request->data['Project']['image']['size'] != 0) {
 
-                // delete old image    
-                $project = $this->Project->findById($id);
+                // delete old image
 
                 $imagePath = sprintf('%s/%s/%s', $user['id'], $project['Project']['id'], $project['Project']['image']);
 
@@ -248,29 +364,35 @@ class ProjectsController extends AppController {
                 $this->Project->set('image_url', $this->Amazon->S3->request_url);
                 $this->Project->set('image', $name);
                 $this->Project->set('id', $this->request->data['Project']['id']);
+                $this->Project->set('tags', $this->request->data['Project']['tags']);
 
-                // update community project is member of
-                $community_id = $this->request->data['Project']['community'];
-                // debug( $this->request->data); exit();
-                if (isset($community_id) && $community_id != NULL) {
+                if ($kind == 'ping') {
+                    // update community project is member of
+                    $community_id = $this->request->data['Project']['community'];
+                    // debug( $this->request->data); exit();
+                    if (isset($community_id) && $community_id != NULL) {
 
-                    $comProj_id = $this->Project->CommunitiesProject->findByProjectId($id);
-                    if ($comProj_id == null) {
-                        $this->Project->CommunitiesProject->create();
-                        $this->Project->CommunitiesProject->save(array('project_id' => $id, 'community_id' => $community_id));
-                    } else {
-                        $this->Project->CommunitiesProject->id = $comProj_id;
-                        $this->Project->CommunitiesProject->saveField('community_id', $community_id);
-                    }
-                } // end if
+                        $comProj_id = $this->Project->CommunitiesProject->findByProjectId($id);
+                        if ($comProj_id == null) {
+                            $this->Project->CommunitiesProject->create();
+                            $this->Project->CommunitiesProject->save(array('project_id' => $id, 'community_id' => $community_id));
+                        } else {
+                            $this->Project->CommunitiesProject->id = $comProj_id;
+                            $this->Project->CommunitiesProject->saveField('community_id', $community_id);
+                        }
+                    } // end if
+                }
+
+
                 // update
                 $this->Project->save();
                 $this->Session->setFlash('The Ping has been edited..', 'Flashes/success');
 
+                $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
                 if ($user['group_id'] == 1) {
-                    return $this->redirect(array('action' => 'viewPing', $id, 'admin' => false));
+                    return $this->redirect(array('action' => $action, $id, 'admin' => false));
                 } else {
-                    return $this->redirect(array('action' => 'viewPing', $id));
+                    return $this->redirect(array('action' => $action, $id));
                 }
             } elseif ($this->request->data['Project']['image']['size'] == 0) {
 
@@ -279,28 +401,88 @@ class ProjectsController extends AppController {
                 $this->Project->set('description', $this->request->data['Project']['description']);
                 $this->Project->set('status', $this->request->data['Project']['status']);
                 $this->Project->set('id', $this->request->data['Project']['id']);
+                $this->Project->set('tags', $this->request->data['Project']['tags']);
 
+                if($kind == 'ping'){
                 // update community project is member of
-                $community_id = $this->request->data['Project']['community'];
-                // debug( $this->request->data); exit();
-                if (isset($community_id) && $community_id != NULL) {
+                    $community_id = $this->request->data['Project']['community'];
+                    // debug( $this->request->data); exit();
+                    if (isset($community_id) && $community_id != NULL) {
 
-                    $comProj_id = $this->Project->CommunitiesProject->findByProjectId($id);
-                    if ($comProj_id == null) {
-                        $this->Project->CommunitiesProject->create();
-                        $this->Project->CommunitiesProject->save(array('project_id' => $id, 'community_id' => $community_id));
-                    } else {
-                        $this->Project->CommunitiesProject->id = $comProj_id;
-                        $this->Project->CommunitiesProject->saveField('community_id', $community_id);
+                        $comProj_id = $this->Project->CommunitiesProject->findByProjectId($id);
+                        if ($comProj_id == null) {
+                            $this->Project->CommunitiesProject->create();
+                            $this->Project->CommunitiesProject->save(array('project_id' => $id, 'community_id' => $community_id));
+                        } else {
+                            $this->Project->CommunitiesProject->id = $comProj_id;
+                            $this->Project->CommunitiesProject->saveField('community_id', $community_id);
+                        }
+                    } // end if
+                }
+                elseif ($kind == 'team_up') {
+
+                    if (isset($this->request->data['Project']['user_ids'])){
+
+                        $old_project_members = array();
+                        $accepted_invitations = array();
+
+                        foreach($project['ProjectsUser'] as $member){
+                            $accepted_invitations[$member['user_id']] = $member['accepted_invitation'];
+
+                            if($member["user_role"] == "collaborator"){
+
+                                $this->Project->ProjectsUser->delete($member['id']);
+                                $old_project_members[] = $member['user_id'];
+                            }
+                            elseif($member["user_role"] == "owner"){
+
+                                $owner_id = $member["user_id"];
+                            }
+                        }
+
+                        $new_project_members = explode(',',$this->request->data['Project']['user_ids']);
+                        $owner = $this->Auth->user();
+
+                        foreach($new_project_members as $member){
+
+                            $accepted_invitation = 0;
+
+                            if($user_id = intval($member)){
+
+                                if(isset($owner_id) && $user_id == $owner_id){
+                                    break;
+                                }
+
+                                if(!in_array($user_id, $old_project_members)){
+                                    $url = '/Projects/viewTeamUp/' . $project['Project']['id'];
+                                    $message = $owner['username'] . " wants to team up! <a id='notification_url' href='".$url."'>Check it out!</a>";
+                                    $this->Project->User->Notification->msg($user_id, $message);
+                                }
+                                else{
+
+                                    $accepted_invitation =  isset($accepted_invitations[$user_id]) && $accepted_invitations[$user_id];
+                                }
+                                $this->Project->ProjectsUser->create();
+                                $this->Project->ProjectsUser->save(
+                                    array(
+                                        'project_id' => $project['Project']['id'],
+                                        'user_id' => $user_id,
+                                        'user_role' => 'collaborator',
+                                        'accepted_invitation' => $accepted_invitation
+                                    )
+                                );
+                            }
+                        }
                     }
-                } // end if
+                }
 
                 if ($this->Project->save()) {
                     $this->Session->setFlash('The Ping has been edited.', 'Flashes/success');
+                    $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
                     if ($user['group_id'] == 1) {
-                        return $this->redirect(array('action' => 'viewPing', $id, 'admin' => false));
+                        return $this->redirect(array('action' => $action, $id, 'admin' => false));
                     } else {
-                        return $this->redirect(array('action' => 'viewPing', $id));
+                        return $this->redirect(array('action' => $action, $id));
                     }
                 }
             } else {
@@ -308,7 +490,18 @@ class ProjectsController extends AppController {
             }
         } else {
             $options = array('conditions' => array('Project.' . $this->Project->primaryKey => $id));
-            $this->request->data = $this->Project->find('first', $options);
+            $projects = $this->Project->find('first', $options);
+
+            $project_users = "";
+            $project_usernames = "";
+            foreach($projects["User"] as $user){
+                $project_users[] = $user["id"];
+                $project_usernames[] = $user["username"];
+            }
+
+            $projects["Project"]["user_ids"] = implode(',', $project_users);
+            $projects["Project"]["usernames"] = implode(', ', $project_usernames);
+            $this->request->data = $projects;
         }
 
         $assets = $this->Project->Asset->find('list');
@@ -397,6 +590,10 @@ class ProjectsController extends AppController {
         // if pingster tries to edit or delete ping not theirs:
         if ($group == 'pingsters') {
 
+            if (in_array($this->action, array('searchPings', 'searchTeamUps', 'invitationResponse'))) {
+                return true;
+            }
+
             // 1 check if pingster ties to edit or delete project
             //  1.1 deny if user does not own project
             //  1.2 allow if user owns project (by join table)
@@ -409,7 +606,7 @@ class ProjectsController extends AppController {
             //  3.1 allow
             // final return calls parent/base isAuthorized method => false 
 
-            if (in_array($this->action, array('edit', 'editPing', 'delete'))) {
+            if (in_array($this->action, array('edit', 'editPing', 'editTeamUp', 'delete'))) {
 
                 $projectId = (int) $this->request->params['pass'][0];
 
@@ -417,7 +614,8 @@ class ProjectsController extends AppController {
                     'conditions' => array(
                         'AND' => array(
                             'ProjectsUser.user_id' => $user['id'],
-                            'ProjectsUser.project_id' => $projectId
+                            'ProjectsUser.project_id' => $projectId,
+                            'ProjectsUser.user_role' => 'owner'
                         )
                     ),
                 );
@@ -436,7 +634,7 @@ class ProjectsController extends AppController {
                 }
             }
             // else if pingster tries to view private projects:
-            elseif (in_array($this->action, array('view', 'viewPing'))) {
+            elseif (in_array($this->action, array('view', 'viewPing', 'viewTeamUp'))) {
 
                 $projectId = (int) $this->request->params['pass'][0];
 
@@ -446,12 +644,15 @@ class ProjectsController extends AppController {
                     ),
                 );
 
-                $result = $this->Project->ProjectsUser->find('first', $options);
+                $results = $this->Project->ProjectsUser->find('all', $options);
 
-                // if owner & same user id return true
-                if ($result['ProjectsUser']['user_role'] === 'owner' && $result['ProjectsUser']['user_id'] == $user['id']) {
-                    return true;
+                foreach($results as $result){
+
+                    if($result['ProjectsUser']['user_id'] == $user['id']){
+                        return true;
+                    }
                 }
+
                 // if public, return true (any one can view
                 if ($result['Project']['status'] === 'public') {
                     return true;
@@ -467,7 +668,7 @@ class ProjectsController extends AppController {
                 // this does not notify the user after denying access:
                 $this->Auth->authError = false;
                 return false;
-            } elseif (in_array($this->action, array('myPings', 'addPing', 'community'))) {
+            } elseif (in_array($this->action, array('myPings', 'myTeamUps', 'addTeamUp', 'addPing', 'community'))) {
                 return true;
             }
         }// end if pingster
@@ -477,6 +678,128 @@ class ProjectsController extends AppController {
         }
 
         return parent::isAuthorized($user); // false
+    }
+
+    public function searchPings(){
+
+        $type='ping';
+
+        $options = array('fields' => array('title', 'description', 'image_url'));
+
+        if(isset($this->request->query['term']))
+        {
+            $term = $this->request->query['term'];
+
+            $options['conditions'] = array(
+                'Project.kind' => $type,
+                'Project.status' => 'public',
+                "OR" => array(
+                    "Project.title LIKE" => '%'.$term.'%',
+                    "Project.description LIKE" => '%'.$term.'%'
+                )
+            );
+
+            $options['order'] = array('Project.modified');
+            $results = $this->Project->find('all', $options);
+
+            $this->set('project', $results);;
+        }
+
+        $this->set('_serialize', 'project');
+    }
+
+    public function searchTeamUps(){
+
+        $type='team_up';
+
+        $user = $this->Auth->user();
+
+        $options = array('fields' => array('title', 'description', 'image_url'));
+
+        if(isset($this->request->query['term']))
+        {
+            $term = $this->request->query['term'];
+
+            $options['conditions'] = array(
+                'Project.kind' => $type,
+                "OR" => array(
+                    "Project.status" => 'public',
+                    "ProjectsUser.user_id" => $user['id'],
+                    "User.id" => $user['id']
+                ),
+                "OR" => array(
+                    "Project.title LIKE" => '%'.$term.'%',
+                    "Project.description LIKE" => '%'.$term.'%',
+                    "Project.tags LIKE" => '%'.$term.'%'
+                )
+            );
+
+            $options['order'] = array('Project.modified');
+
+            $this->set('project', $this->Project->find('all', $options));;
+        }
+
+        $this->set('_serialize', 'project');
+    }
+
+    public function invitationResponse(){
+
+
+        if ($this->request->is(array('post'))) {
+
+            $this->autoRender = false;
+
+            $project_id = isset($this->request->data['project_id']) ?
+                            $project_id = $this->request->data['project_id'] :
+                            null;
+
+            if($this->request->data['response'] == "yes"){
+
+                $this->acceptInvitation($project_id, $this->Auth->user('id'));
+                return  $this->redirect(array('action' => 'viewTeamUp', $project_id));
+            }
+            else{
+
+                $this->removeUser($project_id, $this->Auth->user('id'));
+                return $this->redirect('/');;
+            }
+        }
+    }
+
+    public function removeUser($project_id, $user_id){
+
+        if($project_id && $user_id){
+
+            $options = array(
+                'conditions' => array(
+                    'ProjectsUser.project_id' => $project_id,
+                    'ProjectsUser.user_id' => $user_id
+                ),
+            );
+
+            $result = $this->Project->ProjectsUser->find('first', $options);
+            $this->Project->ProjectsUser->read('accepted_invitation',$result['ProjectsUser']['id']);
+            $this->Project->ProjectsUser->delete();
+        }
+    }
+
+    public function acceptInvitation($project_id, $user_id){
+
+        if($project_id && $user_id){
+
+            $options = array(
+                'conditions' => array(
+                    'ProjectsUser.project_id' => $project_id,
+                    'ProjectsUser.user_id' => $user_id
+                ),
+            );
+
+            $result = $this->Project->ProjectsUser->find('first', $options);
+            $this->Project->ProjectsUser->read('accepted_invitation',$result['ProjectsUser']['id']);
+            $this->Project->ProjectsUser->set('accepted_invitation' ,1);
+            $this->Project->ProjectsUser->save();
+
+        }
     }
 
 // end isAuthorized

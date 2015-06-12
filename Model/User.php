@@ -310,8 +310,13 @@ class User extends AppModel {
             'finderQuery' => '',
             'counterQuery' => ''
         ),
-        'ProjectsUser'
+        'ProjectsUser',
+        'Notification' => array(
+            'className' => 'Notification',
+            'foreignKey' => 'user_id',
+        ),
     );
+
 
     /**
      * hasAndBelongsToMany associations
@@ -373,5 +378,17 @@ class User extends AppModel {
             return array('Group' => array('id' => $groupId));
         }
     }
+
+    public function getActive() {
+
+    return $this->Project->User->find(
+       'list',
+        array(
+            'fields' => array('user.username'),
+            'recursive' => 0
+        )
+        );
+    }
+
 
 }
