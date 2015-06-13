@@ -77,20 +77,21 @@
                             <i class="fa fa-bell-o"></i>
                             <span class="label <?php if (count($Notifications) > 0) { echo "label-warning"; }?>"><?php echo count($Notifications); ?></span>
                           </a>
-                          <ul class="dropdown-menu">
+                          <ul class="dropdown-menu notifications">
+                            <div class="notification-heading">
                                 <h4 class="menu-title">Notifications</h4>
+                            </div>
+                            <li class="divider"></li>
                             <li>
                               <!-- inner menu: contains the actual data -->
-                              <ul class="menu">
                                 <li>
                                 <?php foreach($Notifications as $Notification): ?>
-                                   <li class="notification-item">
+                                   <li class="box box-warning notification-item">
                                     <h4 class="item-title"><i class="ion ion-ios-people info"></i><?php echo $Notification['Notification']['message'];?></h4>
                                     <p class="item-info"><?php echo $Notification['Notification']['created']; ?></p>
                                   </li>
                                   <?php endforeach;?>
                                 </li>
-                              </ul>
                             </li>
                           </ul>
                         </li>
