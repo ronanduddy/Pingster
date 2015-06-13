@@ -132,7 +132,7 @@ class CommentsController extends AppController {
             $this->Session->setFlash('The asset could not be saved, your comment was however.', 'Flashes/danger');
             return $this->redirect(array('controller' => 'Projects', 'action' => 'myPings', $this->request->data['Comment']['project_id']));
         }
-        return $this->redirect(array('controller' => 'Projects', 'action' => 'viewPing', $this->request->data['Comment']['project_id']));
+        return $this->redirect($this->referer());
     }
 
     /**
@@ -287,12 +287,16 @@ class CommentsController extends AppController {
                     ),
                 );
 
-                $result = $this->Comment->Project->find('first', $options);
+                $results = $this->Comment->Project->find('first', $options);
 
                 // if owner & same user id return true
-                if ($result['ProjectsUser'][0]['user_role'] === 'owner' && $result['ProjectsUser'][0]['user_id'] == $user['id']) {
-                    return true;
+                foreach($results['ProjectsUser'] as $result){
+
+                    if($result['user_id'] == $user['id']){
+                        return true;
+                    }
                 }
+
                 // if public, return true (any one can view
                 if ($result['Project']['status'] === 'public') {
                     return true;

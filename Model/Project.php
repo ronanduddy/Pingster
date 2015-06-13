@@ -97,7 +97,6 @@ class Project extends AppModel {
             )
         ),
     );
-
     //The Associations below have been created with all possible keys, those that are not needed can be removed
 
     /**
@@ -145,8 +144,11 @@ class Project extends AppModel {
             'finderQuery' => '',
             'counterQuery' => ''
         ),
-        'ProjectsUser',
-        'CommunitiesProject'
+        'ProjectsUser' => array(
+            'className' => 'ProjectsUser',
+            'foreignKey' => 'project_id'
+        ),
+        'CommunitiesProject',
     );
 
     /**

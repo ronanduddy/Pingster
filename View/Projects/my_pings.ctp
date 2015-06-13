@@ -32,16 +32,10 @@
                     Make a Ping!
                 </h3>
             </div>
-            <div class="box-body">
-                <div class="thumbnail" style="background-color: #e8535d">
-                    <?php echo $this->Html->image('pingster.png'); ?>                
-                </div>
-                The Ping world awaits you...
-            </div>
             <div class="box-footer">
                 <p style="text-align: right">
                     <?php
-                    echo $this->Html->link('Create new Ping', array('controller' => 'Projects', 'action' => 'addPing'), array('title' => 'Create a Ping project', 'class' => 'btn btn-success btn-lg'));
+                    echo $this->Html->link('Create', array('controller' => 'Projects', 'action' => 'addPing'), array('title' => 'Create a Ping project', 'class' => 'btn btn-success btn-lg'));
                     ?>
                 </p>
             </div>

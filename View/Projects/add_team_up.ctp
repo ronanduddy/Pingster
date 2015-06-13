@@ -1,3 +1,16 @@
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<?php
+echo $this->Html->css('jQueryUI/jquery-ui-1.10.3.custom.min');
+echo $this->Html->script('Projects');
+?>
+
+<script language="Javascript">
+
+    $(document).ready(function() {
+                 docRoot = '<?php echo FULL_BASE_URL; ?>';
+    });
+</script>
+
 <div class="col-lg-6 col-lg-offset-3">
     <div class="box box-primary">
         <div class="box-header">
@@ -5,33 +18,25 @@
         </div>
         <div class="box-body">
             <?php
-            // create form to add ping
+            // create form to add a team up
             echo $this->Form->create('Project', array(
-                'action' => 'addPing',
+                'action' => 'addTeamUp',
                 'type' => 'file'
             ));
 
-//            echo $this->Form->input('Project.kind', array(
-//                'options' => array(
-//                    'ping' => 'Ping',
-//                    'team_up' => 'Team Up'
-//                ),
-//                'label' => 'Project kind',
-//            ));
             // for User model:
             // for hidden input to contain user.id for user-project join/link table
             echo $this->Form->input('User.id', array('value' => $user['id']));
 
             // for project model:            
             // hidden input to contain project type/kind
-            echo $this->Form->input('Project.kind', array('value' => 'ping', 'type' => 'hidden'));
+            echo $this->Form->input('Project.kind', array('value' => 'team_up', 'type' => 'hidden'));
 
             // for project model:
             // title
             echo $this->Form->input('Project.title', array(
-                'label' => 'Give your Ping a groovie name',
-                'placeholder' => 'Bebop'
-            ));
+                'label' => 'Give your Team Up a name',
+                'placeholder' => 'Bebop'));
             ?>
             <div class="form-group required">
                 <label class="control-label col-lg-4" for="ProjectDescription">Description</label>
@@ -46,7 +51,6 @@
                         'maxlength' => '140',
                         'placeholder' => 'What\'s it all about?'
                     ));
-
                     ?>  
                 </div>
             </div>
@@ -57,42 +61,22 @@
                 'maxlength' => '140',
                 'placeholder' => 'Adventure, Game, Fun, Space'
             ));
-            // for Project model:
-            // status
-            // if user in created ping from community: set to public
-            if (isset($namedParams['public'])) {
-                echo $this->Form->input('Project.status', array(
-                    'type' => 'hidden',
-                    'value' => 'public',
-                ));
-            } else {
-                echo $this->Form->input('Project.status', array(
-                    'options' => array(
-                        'private' => 'Private',
-                        'public' => 'Public'
-                    ),
-                    'label' => 'Visibility',
-                ));
-            }
 
-            // if user in created ping from community
-            if (isset($namedParams['community'])) {
-                echo $this->Form->input('Project.community', array(
-                    'type' => 'hidden',
-                    'value' => (int) $namedParams['community'],
-                ));
-            } else {
-                echo $this->Form->input('Project.community', array(
-                    'label' => 'Community',
-                    'type' => 'select',
-                    'options' => $communities,
-                    'default' => 0,
-                    'empty' => 'Where do you go?', 'selected' => 'Your Value'
-                ));
-            }
+            echo $this->Form->input('Project.members', array(
+                'label' => 'Team Members',
+                'class'=>'form-control'));
 
-            // for Project model:
-            // image
+            echo $this->Form->input('Project.user_ids', array(
+                 'type' => 'hidden'));
+
+            echo $this->Form->input('Project.status', array(
+                'options' => array(
+                    'private' => 'Private',
+                    'public' => 'Public'
+                ),
+                'label' => 'Visibility',
+            ));
+
             echo $this->Form->input('Project.image', array(
                 'type' => 'file',
                 'label' => 'Take a screen shot and upload it',
@@ -129,3 +113,5 @@
     </div>
 
 </div>
+
+<?php echo $this->Js->writeBuffer(); ?>

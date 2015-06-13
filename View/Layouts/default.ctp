@@ -4,9 +4,11 @@
         <title>
             <?php echo h(preg_replace('/(\w+)([A-Z])/U', '\\1 \\2', ucfirst($this->params['action']))) . ' &middot; Pingster'; ?>
         </title>
+
         <?php
         // get header styles, scripts and meta
         echo $this->element('headerStylesScripts');
+        echo $this->Html->css('notifications');
         ?>
         <style>
             /*Fix for user dropdown on header navbar (uptodate bootstrap overrides this)*/
@@ -32,7 +34,20 @@
                 display:inline;
             }
         </style>
+
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+
+        <script>
+        $(document).ready(function() {
+            $('#notification_url').click(function(){
+                $.ajax({
+                    url: "/Notifications/markAllRead"
+                });
+            });
+        });
+        </script>
     </head>
+
     <body class="skin-blue">
         <!-- header logo: style can be found in header.less -->
         <header class="header">
@@ -46,8 +61,40 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
+                  <form class="navbar-form navbar-left" action="/Search/explore" role="search" method="get">
+                    <div class="form-group">
+                      <input type="text" name="term" class="form-control" id="navbar-search-input" placeholder="Search">
+                      <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                  </form>
+
                 <div class="navbar-right">
-                    <ul class="nav navbar-nav">                                          
+
+                    <ul class="nav navbar-nav">
+                         <!-- Notifications: style can be found in dropdown.less -->
+                        <li class="dropdown notifications-menu">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="label <?php if (count($Notifications) > 0) { echo "label-warning"; }?>"><?php echo count($Notifications); ?></span>
+                          </a>
+                          <ul class="dropdown-menu notifications">
+                            <div class="notification-heading">
+                                <h4 class="menu-title">Notifications</h4>
+                            </div>
+                            <li class="divider"></li>
+                            <li>
+                              <!-- inner menu: contains the actual data -->
+                                <li>
+                                <?php foreach($Notifications as $Notification): ?>
+                                   <li class="box box-warning notification-item">
+                                    <h4 class="item-title"><i class="ion ion-ios-people info"></i><?php echo $Notification['Notification']['message'];?></h4>
+                                    <p class="item-info"><?php echo $Notification['Notification']['created']; ?></p>
+                                  </li>
+                                  <?php endforeach;?>
+                                </li>
+                            </li>
+                          </ul>
+                        </li>
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -78,7 +125,9 @@
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu nav nav-pills nav-stacked">
                         <li><?php echo $this->SideNav->LinkIcon('Dashboard', 'fa fa-dashboard', array('controller' => 'Users', 'action' => 'dashboard', 'admin' => false)); ?></li>
+                        <li><?php echo $this->SideNav->LinkIcon('Explore', 'fa fa-search', array('controller' => 'Search', 'action' => 'explore', 'admin' => false)); ?></li>
                         <li><?php echo $this->SideNav->LinkIcon('My Pings', 'fa fa-bolt', array('controller' => 'Projects', 'action' => 'myPings', 'admin' => false)); ?></li>
+                        <li><?php echo $this->SideNav->LinkIcon('My Team-ups', 'fa fa-rocket', array('controller' => 'Projects', 'action' => 'myTeamUps', 'admin' => false)); ?></li>
                         <li><?php echo $this->SideNav->LinkIcon('My Communities', 'fa fa-globe', array('controller' => 'Communities', 'action' => 'index', 'admin' => false)); ?></li>
                         <?php if ($current_user['Group']['name'] == 'admins') : ?>
                             <li class="treeview">

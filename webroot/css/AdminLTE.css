@@ -3533,3 +3533,7 @@ fieldset[disabled] .btn-vk.active {
   color: #587ea3;
   background-color: #ffffff;
 }
+
+.skin-blue .navbar .nav .item-title a {
+    color: #587ea3;
+}

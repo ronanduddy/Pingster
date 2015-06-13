@@ -1,0 +1,1 @@
+ALTER TABLE projects add column tags VARCHAR(1000);
