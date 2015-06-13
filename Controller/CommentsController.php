@@ -132,7 +132,7 @@ class CommentsController extends AppController {
             $this->Session->setFlash('The asset could not be saved, your comment was however.', 'Flashes/danger');
             return $this->redirect(array('controller' => 'Projects', 'action' => 'myPings', $this->request->data['Comment']['project_id']));
         }
-        return $this->redirect(array('controller' => 'Projects', 'action' => 'viewPing', $this->request->data['Comment']['project_id']));
+        return $this->redirect($this->referer());
     }
 
     /**
