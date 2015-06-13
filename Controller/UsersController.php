@@ -379,11 +379,11 @@ class UsersController extends AppController {
         $group = $this->User->Group;
 
         // allow admins to everything
-        $group->id = 2;
+        $group = $this->User->Group->findByName('admins', array('fields' => 'Group.id'));
         $this->Acl->allow($group, 'controllers');
 
         // allow pingsters to:
-        $group->id = 1;
+        $group = $this->User->Group->findByName('pingsters', array('fields' => 'Group.id'));
         $this->Acl->deny($group, 'controllers');
 
         $this->Acl->allow($group, 'controllers/Communities/index');
