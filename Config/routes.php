@@ -27,6 +27,7 @@
  */
 // pingster/ and pingster/home -> Pages/home.ctp
 Router::connect('/', array('controller' => 'home', 'action' => 'index'));
+Router::parseExtensions('json');
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
