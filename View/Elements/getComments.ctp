@@ -76,7 +76,7 @@ $this->Paginator->options(array(
                               // get path info => extension
                               $pathinfo = pathinfo($comment['Asset']['asset_url']);
                               ?>
-                              <?php if (in_array(strtolower($pathinfo['extension']), array('jpg', 'jpeg', 'gif', 'png', 'apng', 'svg', 'bmp', 'ico'))) : ?>
+                              <?php if (array_key_exists('extension', $pathinfo) && in_array(strtolower($pathinfo['extension']), array('jpg', 'jpeg', 'gif', 'png', 'apng', 'svg', 'bmp', 'ico'))) : ?>
                                   <?php
                                   echo $this->Html->image(
                                           $comment['Asset']['asset_url'], array(

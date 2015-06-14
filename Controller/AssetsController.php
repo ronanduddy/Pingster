@@ -157,7 +157,7 @@ class AssetsController extends AppController {
         $urlBits = explode('pingster/', $asset['Asset']['asset_url']);
 
         // delete
-        if ($this->Asset->delete() && $this->Amazon->S3->delete_object($this->s3_bucket, $urlBits[1])) {
+        if ($this->Asset->delete() && $this->Amazon->S3->delete_object(Configure::read('Pingster.s3_bucket'), $urlBits[1])) {
 
             $this->Session->setFlash('The asset has been deleted.', 'Flashes/success');
         } else {
