@@ -32,7 +32,6 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 
-    public $s3_bucket = 'pingster';
     // this is for all controllers to have access to the dashboard url:
     public $dashboard = array('controller' => 'users', 'action' => 'dashboard');
     public $helpers = array(

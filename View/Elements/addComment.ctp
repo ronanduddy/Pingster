@@ -71,7 +71,7 @@
                 'value' => $project['Project']['id'],
                 'type' => 'hidden',
             ));
-            ?>            
+            ?>
         </div>
 
         <div class="box-footer">
@@ -91,6 +91,8 @@
 
     </div>
 
-    <?php echo $this->element('getComments'); ?>
+    <div class="content" id="commentsBlock">
+      <?php echo $this->element('getComments'); ?>
+    </div>
 
 </div>

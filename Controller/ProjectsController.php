@@ -11,7 +11,8 @@ App::uses('AppController', 'Controller');
  */
 class ProjectsController extends AppController {
 
-    public $components = array('Paginator', 'Session');
+    public $components = array('Paginator', 'Session', 'RequestHandler');
+    public $helpers = array('Js');
 
     public function myTeamUps($id=null) {
 
@@ -117,7 +118,7 @@ class ProjectsController extends AppController {
         // getting comments
         $this->Paginator->settings = array(
             'conditions' => array('Project.id' => $id),
-            'limit' => 10,
+            'limit' => 3, /* RMV 10 */
             'order' => array('Comment.created' => 'desc'),
         );
         $commentsList = $this->Paginator->paginate('Comment');
@@ -184,6 +185,8 @@ class ProjectsController extends AppController {
     // adds a ping 
     public function addProject($kind='ping') {
         $user = $this->Auth->user();
+        $s3_bucket = Configure::read('Pingster.s3_bucket');
+        $s3_region = constant('AmazonS3::' . Configure::read('Pingster.s3_region'));
 
         if ($this->request->is('post')) {
             $this->Project->create();
@@ -207,14 +210,14 @@ class ProjectsController extends AppController {
                         $file_info = $finfo->file($file_name);
                         $mime_type = substr($file_info, 0, strpos($file_info, ';'));
 
-                        $this->Amazon->S3->set_region(AmazonS3::REGION_IRELAND);
+                        $this->Amazon->S3->set_region($s3_region);
 
                         $user = $this->Auth->user();
                         // save to pingster/user/project/image.png
                         $saveTo = sprintf('%s/%s/%s', $user['id'], $this->Project->id, $name);
 
                         $this->Amazon->S3->create_object(
-                                $this->s3_bucket, $saveTo, array(
+                                  $s3_bucket, $saveTo, array(
                             'fileUpload' => $tmp_name,
                             'acl' => AmazonS3::ACL_PUBLIC,
                             'meta' => array('Content-Type' => $mime_type)
@@ -315,6 +318,8 @@ class ProjectsController extends AppController {
 
     public function editProject($id = null, $kind = 'ping') {
         $user = $this->Auth->user();
+        $s3_bucket = Configure::read('Pingster.s3_bucket');
+        $s3_region = constant('AmazonS3::' . Configure::read('Pingster.s3_region'));
 
         if (!$this->Project->exists($id)) {
             throw new NotFoundException('Invalid project');
@@ -331,7 +336,7 @@ class ProjectsController extends AppController {
                 $imagePath = sprintf('%s/%s/%s', $user['id'], $project['Project']['id'], $project['Project']['image']);
 
                 // remove old image
-                $this->Amazon->S3->delete_object($this->s3_bucket, $imagePath);
+                $this->Amazon->S3->delete_object($s3_bucket, $imagePath);
 
                 // tmp vars as request data will be nulled
                 $tmp_name = $this->request->data['Project']['image']['tmp_name'];
@@ -347,13 +352,13 @@ class ProjectsController extends AppController {
                     $file_info = $finfo->file($file_name);
                     $mime_type = substr($file_info, 0, strpos($file_info, ';'));
 
-                    $this->Amazon->S3->set_region(AmazonS3::REGION_IRELAND);
+                    $this->Amazon->S3->set_region($s3_region);
 
                     // save to pingster/user/project/image.png
                     $saveTo = sprintf('%s/%s/%s', $user['id'], $this->request->data['Project']['id'], $name);
 
                     $this->Amazon->S3->create_object(
-                            $this->s3_bucket, $saveTo, array(
+                            $s3_bucket, $saveTo, array(
                         'fileUpload' => $tmp_name,
                         'acl' => AmazonS3::ACL_PUBLIC,
                         'meta' => array('Content-Type' => $mime_type)
@@ -517,6 +522,7 @@ class ProjectsController extends AppController {
     public function delete($id = null) {
         $this->Project->id = $id;
         $user = $this->Auth->user();
+        $s3_bucket = Configure::read('Pingster.s3_bucket');
         if (!$this->Project->exists()) {
             throw new NotFoundException('Invalid project');
         }
@@ -549,14 +555,14 @@ class ProjectsController extends AppController {
             // get list of object to delete in project belonging to user
             // note this will not delete other user's assets that may be 
             // associated with the project. 
-            $S3List = $this->Amazon->S3->get_object_list($this->s3_bucket, array(
+            $S3List = $this->Amazon->S3->get_object_list($s3_bucket, array(
                 'prefix' => sprintf('%s/%s/', $project['ProjectsUser'][0]['user_id'], $id)
             ));
 
 
             // delete from S3
             foreach ($S3List as $object) {
-                $this->Amazon->S3->delete_object($this->s3_bucket, $object);
+                $this->Amazon->S3->delete_object($s3_bucket, $object);
             }
 
             $this->Session->setFlash('The project has been deleted.', 'Flashes/success');
@@ -583,10 +589,46 @@ class ProjectsController extends AppController {
         parent::beforeFilter();
     }
 
+    public function displayComments($id=null) {
+
+        // getting project 
+        $options = array(
+            'conditions' => array(
+                'AND' => array(
+                    'Project.id' => $id
+                ),
+            )
+        );
+
+        // find project and set into view
+        $this->Project->recursive = -1;
+        $this->set('project', $this->Project->ProjectsUser->find('first', $options));
+        // getting comments
+        $this->Paginator->settings = array(
+            'conditions' => array('Project.id' => $id),
+            'limit' => 3, /* RMV 10 */
+            'order' => array('Comment.created' => 'desc'),
+        );
+
+        /* If we are off the end, particularly when deleting the last item on a single-element page, redirect to final page */
+
+        try {
+          $commentsList = $this->Paginator->paginate('Comment');
+        }
+        catch (NotFoundException $e)
+        {
+          //FIXME: Workaround for paginator failing to set pagination metrics before exception (in this version)
+          $this->request->params['named']['page'] = 0;
+          $this->Paginator->paginate('Comment');
+          return $this->redirect([$id, 'page' => $this->request->params['paging']['Comment']['pageCount']]);
+        }
+        $this->set(compact('commentsList'));
+    }
+
     public function isAuthorized($user) {
 
         $group = $user['Group']['name'];
-        
+
         // if pingster tries to edit or delete ping not theirs:
         if ($group == 'pingsters') {
 
@@ -634,7 +676,7 @@ class ProjectsController extends AppController {
                 }
             }
             // else if pingster tries to view private projects:
-            elseif (in_array($this->action, array('view', 'viewPing', 'viewTeamUp'))) {
+            elseif (in_array($this->action, array('view', 'viewPing', 'viewTeamUp', 'displayComments'))) {
 
                 $projectId = (int) $this->request->params['pass'][0];
 

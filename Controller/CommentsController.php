@@ -16,7 +16,7 @@ class CommentsController extends AppController {
      *
      * @var array
      */
-    public $components = array('Paginator', 'Session');
+    public $components = array('Paginator', 'Session', 'RequestHandler');
 
     /**
      * index method
@@ -68,6 +68,10 @@ class CommentsController extends AppController {
     }
 
     public function commentOnPing() {
+        $s3_bucket = Configure::read('Pingster.s3_bucket');
+        $s3_region = constant('AmazonS3::' . Configure::read('Pingster.s3_region'));
+        debug($s3_region);
+
         if ($this->request->is('post')) {
             //debug($this->request->data);exit();
             // create asset & comment if upload was error free; save to db 
@@ -93,7 +97,7 @@ class CommentsController extends AppController {
                         $file_info = $finfo->file($file_name);
                         $mime_type = substr($file_info, 0, strpos($file_info, ';'));
 
-                        $this->Amazon->S3->set_region(AmazonS3::REGION_IRELAND);
+                        $this->Amazon->S3->set_region($s3_region);
 
                         $user = $this->Auth->user();
 
@@ -101,7 +105,7 @@ class CommentsController extends AppController {
                         $saveTo = sprintf('%s/%s/%s/%s', $user['id'], $this->request->data['Project']['id'], $this->Comment->Project->Asset->id, $name);
 
                         $this->Amazon->S3->create_object(
-                                $this->s3_bucket, $saveTo, array(
+                                $s3_bucket, $saveTo, array(
                             'fileUpload' => $tmp_name,
                             'acl' => AmazonS3::ACL_PUBLIC,
                             'meta' => array('Content-Type' => $mime_type)
@@ -185,6 +189,7 @@ class CommentsController extends AppController {
 
     public function delete($id = null) {
         $user = $this->Auth->user();
+        $s3_bucket = Configure::read('Pingster.s3_bucket');
 
         $this->Comment->id = $id;
 
@@ -204,28 +209,42 @@ class CommentsController extends AppController {
             // if deleted comment and corresponding asset record
             if ($this->Comment->delete() && $this->Comment->Asset->delete($assetID['Comment']['asset_id'])) {
                 // delete asset in s3 too
-                $this->Amazon->S3->delete_object($this->s3_bucket, $assetPath);
+                $this->Amazon->S3->delete_object($s3_bucket, $assetPath);
 
-                $this->Session->setFlash('The comment & asset have been deleted.', 'Flashes/success');
+                $message = 'The comment & asset have been deleted.';
+                $success = true;
             } else {
-                $this->Session->setFlash('The comment or asset could not be deleted. Please, try again.', 'Flashes/warning');
+                $message = 'The comment or asset could not be deleted. Please, try again.';
+                $success = false;
             }
         } else {
             // if just deleted comment record
             if ($this->Comment->delete()) {
-                $this->Session->setFlash('The comment has been deleted.', 'Flashes/success');
+              $message = 'The comment has been deleted.';
+              $success = true;
             } else {
-                $this->Session->setFlash('The comment could not be deleted. Please, try again.', 'Flashes/warning');
+              $message = 'The comment could not be deleted. Please, try again.';
+              $success = false;
             }
         }
 
-        // redirect to ping or team up going by data in POST
-        if ($this->request->query['kind'] === 'ping') {
-            return $this->redirect(array('controller' => 'Projects', 'action' => 'viewPing', $this->request->query['projectId']));
-        } elseif ($this->request->query['kind'] === 'team_up') {
-            return $this->redirect(array('controller' => 'Projects', 'action' => 'viewTeamUp', $this->request->query['projectId']));
-        } else {
-            return $this->redirect(array('action' => 'index'));
+        if ($this->request->is('ajax'))
+        {
+          $this->set(compact('message', 'success'));
+          $this->set('_serialize', ['message', 'success']);
+        }
+        else
+        {
+          $this->Session->setFlash($message, $success ? 'Flashes/success' : 'Flashes/warning');
+
+          // redirect to ping or team up going by data in POST
+          if ($this->request->query['kind'] === 'ping') {
+              return $this->redirect(array('controller' => 'Projects', 'action' => 'viewPing', $this->request->query['projectId']));
+          } elseif ($this->request->query['kind'] === 'team_up') {
+              return $this->redirect(array('controller' => 'Projects', 'action' => 'viewTeamUp', $this->request->query['projectId']));
+          } else {
+              return $this->redirect(array('action' => 'index'));
+          }
         }
     }
 
