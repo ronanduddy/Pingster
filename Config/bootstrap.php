@@ -89,6 +89,8 @@ Configure::write('Dispatcher.filters', array(
     'CacheDispatcher'
 ));
 
+Configure::load('pingster');
+
 /**
  * Configures default file logging options
  */
