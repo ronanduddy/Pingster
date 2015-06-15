@@ -19,7 +19,7 @@
                 border-right: 1px solid #dddddd;
                 left: auto;
                 position: absolute;
-                right: 0;
+                right: 10px;
                 top: 100%;
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
                 min-width: 160px;
@@ -102,6 +102,9 @@
                                 <span><?php printf('%s', h($current_user['username'])); ?> <i class="caret"></i></span>
                             </a>
                             <ul class="dropdown-menu">
+                                <li class="user-header">
+                                    <?php echo $this->element('getUserAvatar', array('size' => 100)); ?>
+                                </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
