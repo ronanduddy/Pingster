@@ -43,8 +43,13 @@
                             </small>
                         </span>
 
-                        <h3 class="timeline-header">        
-                            <i class="fa fa-user"></i>
+                        <h3 class="timeline-header">
+                            <i>
+                            <?php
+                            echo $this->Element('getUserAvatar',
+                                array('grav_email' => $comment['User']['email'])
+                            );?>
+                            </i>
                             <?php
                             echo $this->Html->link($comment['User']['username'], array(
                                 'controller' => 'users',

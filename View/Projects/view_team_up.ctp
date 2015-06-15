@@ -92,7 +92,12 @@
                 <?php
                 if(!empty($ProjectUsers)){
                     foreach($ProjectUsers as $user){
+
                         echo '<li class="list-group-item">';
+                        echo $this->element('getUserAvatar',
+                            array('grav_email' => $user['email'],
+                                'size' => 60)
+                            );
                         echo $this->Html->link($user['username'], array(
                             'controller' => 'users',
                             'action' => 'view',
