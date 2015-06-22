@@ -103,13 +103,41 @@ $this->Paginator->options(array(
                       <div class="clearfix">
                           <?php
                           if ($comment['Comment']['asset_id'] != null) {
-                              echo $this->Html->link('Download ' . $comment['Asset']['asset'], $comment['Asset']['asset_url'], array('class' => 'btn btn-primary pull-left', 'target' => '_blank', 'title' => 'Download ' . $comment['Asset']['asset_url']));
+                            echo $this->Html->link('Download ' . $comment['Asset']['asset'],
+                              $comment['Asset']['asset_url'],
+                              array(
+                                'class' => 'btn btn-primary pull-left',
+                                'target' => '_blank',
+                                'title' => 'Download ' . $comment['Asset']['asset_url']
+                              )
+                            );
                           }
                           if ($current_user['id'] == $comment['Comment']['user_id'] || $current_user['Group']['name'] == 'admins') {
-                              echo $this->Html->link(__('Delete'), array('controller' => 'comments', 'action' => 'delete', 'ext' => 'json', $comment['Comment']['id'], '?' => array('projectId' => $project['Project']['id'], 'kind' => $project['Project']['kind'])), array('class' => 'btn btn-danger pull-right comment-deleter'), __('Are you sure you want to delete this comment & asset?', $comment['Comment']['id']));
+                            echo $this->Html->link(__('Delete'),
+                              array(
+                                'controller' => 'comments',
+                                'action' => 'delete',
+                                'ext' => 'json',
+                                $comment['Comment']['id'],
+                                '?' => array('projectId' => $project['Project']['id'],
+                                'kind' => $project['Project']['kind'])
+                              ),
+                              array('class' => 'btn btn-danger pull-right comment-deleter'),
+                              __('Are you sure you want to delete this comment & asset?', $comment['Comment']['id'])
+                            );
                           } else {
                               if ($current_user['id'] == $comment['Comment']['user_id'] || $current_user['Group']['name'] == 'admins') {
-                                  echo $this->Html->link(__('Delete'), array('controller' => 'comments', 'action' => 'delete', 'ext' => 'json', $comment['Comment']['id'], '?' => array('projectId' => $project['Project']['id'], 'kind' => $project['Project']['kind'])), array('class' => 'btn btn-danger pull-right comment-deleter'), __('Are you sure you want to delete this comment?', $comment['Comment']['id']));
+                                echo $this->Html->link(__('Delete'),
+                                  array(
+                                    'controller' => 'comments',
+                                    'action' => 'delete',
+                                    'ext' => 'json',
+                                    $comment['Comment']['id'],
+                                    '?' => array('projectId' => $project['Project']['id'], 'kind' => $project['Project']['kind'])
+                                  ),
+                                  array('class' => 'btn btn-danger pull-right comment-deleter'),
+                                  __('Are you sure you want to delete this comment?', $comment['Comment']['id'])
+                                );
                               }
                           }
                           ?>
@@ -139,52 +167,18 @@ $this->Paginator->options(array(
     ?>
 </div>
 
-<script>
-  function commentLoad(loc)
-  {
-    var block = $('#commentsBlock');
-    block.fadeOut();
-    $.ajax({dataType: "html", evalScripts: true, url: loc, success: function (data, textStatus) {
-      block.hide();
-      block.empty().append(data);
-      block.fadeIn();
-    }})
-    .fail(function (jqxhr) {
-      block.fadeIn({
-        done: function () {
-          commentDisplayError("Could not load this comment, sorry!");
-        }
-      });
-    });
-  }
+<input id='commentsPaginatorUrl' type='hidden' value='<?php
+  echo $this->Paginator->url(array(
+    $project['Project']['id'],
+    'controller' => 'Projects',
+    'action' => 'displayComments',
+    'page' => $this->Paginator->current('Comment')
+  ));
+?>' />
 
-  function commentDisplayError(message) {
-    var flash = $("#commentsPage .commentsFlash");
-    flash.hide();
-    flash.empty().append(message);
-    flash.slideDown("slow");
-  }
-
-  $(function () {
-    $('#commentsBlock .comment-navigator a').bind('click', function (e) {
-      var destination = $(e.target).attr('href');
-      e.preventDefault();
-      commentLoad(destination);
-    });
-
-    $('#commentsBlock .comment-deleter').bind('click', function (e) {
-      var destination = $(e.target).attr('href');
-      e.preventDefault();
-      $.ajax({type: "POST", dataType: "html", evalScripts: true, url: destination, data: {_method: "POST"}, success: function (data, textStatus) {
-        commentLoad('<?= $this->Paginator->url([$project['Project']['id'], 'controller' => 'Projects', 'action' => 'displayComments', 'page' => $this->Paginator->current('Comment')]) ?>');
-      }})
-      .fail(function (jqxhr) {
-        var data = $.parseJSON(jqxhr.responseText);
-        commentDisplayError(data.message);
-      });
-    });
-  });
-</script>
+<?php
+  echo $this->Html->script('Comments');
+?>
 
 <?php else: ?>
     <div class="box box-solid">
