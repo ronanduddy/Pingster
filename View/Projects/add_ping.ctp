@@ -1,16 +1,25 @@
+<?php if (!$partial): ?>
 <div class="col-lg-6 col-lg-offset-3">
     <div class="box box-primary">
         <div class="box-header">
             <h3 class="box-title"><?php echo h(preg_replace('/(\w+)([A-Z])/U', '\\1 \\2', ucfirst($this->params['action']))); ?></h3>
         </div>
-        <div class="box-body">
-            <?php
+<?php endif; ?>
+        <?php
             // create form to add ping
             echo $this->Form->create('Project', array(
-                'action' => 'addPing',
-                'type' => 'file'
+                'url' => array(
+                  'controller' => 'Projects',
+                  'action' => 'addPing',
+                  'ext' => ($partial ? 'json' : '')
+                ),
+                'type' => 'file',
+                'id' => 'addPingForm'
             ));
 
+        ?>
+        <div class="box-body">
+            <?php
 //            echo $this->Form->input('Project.kind', array(
 //                'options' => array(
 //                    'ping' => 'Ping',
@@ -121,11 +130,15 @@
                     echo $this->Html->link('Back', array('controller' => 'Projects', 'action' => 'myPings'), array('title' => 'Go back to the Ping page', 'class' => 'btn btn-default'));
                 }
 
-                // end
-                echo $this->Form->end();
                 ?>
             </div>
         </div>
+        <?php
+            // end
+            echo $this->Form->end();
+        ?>
     </div>
 
+<?php if (!$partial): ?>
 </div>
+<?php endif; ?>

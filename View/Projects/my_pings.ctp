@@ -25,6 +25,7 @@
 </style>
 <div id="masonryContainer" class="container">
 
+    <div id="dialogProjectsCreate"></div>
     <div class="masonryItem">     
         <div class="box box-success">
             <div class="box-header">
@@ -35,7 +36,17 @@
             <div class="box-footer">
                 <p style="text-align: right">
                     <?php
-                    echo $this->Html->link('Create', array('controller' => 'Projects', 'action' => 'addPing'), array('title' => 'Create a Ping project', 'class' => 'btn btn-success btn-lg'));
+                      echo $this->Html->link('Create',
+                        array(
+                          'controller' => 'Projects',
+                          'action' => 'addPing'
+                        ),
+                        array(
+                          'id' => 'ProjectsCreateButton',
+                          'title' => 'Create a Ping project',
+                          'class' => 'btn btn-success btn-lg'
+                        )
+                      );
                     ?>
                 </p>
             </div>
@@ -132,3 +143,5 @@
         </div>
 
     </div>
+
+<?php echo $this->Html->script('Pings'); ?>

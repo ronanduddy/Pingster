@@ -272,17 +272,43 @@ class ProjectsController extends AppController {
                     }
 
 
-                    $this->Session->setFlash('Ping created.', 'Flashes/success');
-                    $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
-                    if ($user['group_id'] == 1) {
-                        return $this->redirect(array('action' => $action, $this->Project->id, 'admin' => false));
-                    } else {
-                        return $this->redirect(array('action' => $action, $this->Project->id));
+                    $message = 'Ping created.';
+                    if ($this->request->is('ajax'))
+                    {
+                      $success = true;
+
+                      $this->set(compact('message', 'success'));
+                      $this->set('_serialize', ['message', 'success']);
+
+                      return;
+                    }
+                    else
+                    {
+                      $this->Session->setFlash($message, 'Flashes/success');
+                      $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
+                      if ($user['group_id'] == 1) {
+                          return $this->redirect(array('action' => $action, $this->Project->id, 'admin' => false));
+                      } else {
+                          return $this->redirect(array('action' => $action, $this->Project->id));
+                      }
                     }
                 }
             } else {
-                $this->Session->setFlash('The Ping could not be saved. Please, try again.', 'Flashes/warning');
-                return $this->redirect(array('action' => 'myPings'));
+                $message = 'The Ping could not be saved. Please, try again.';
+                if ($this->request->is('ajax'))
+                {
+                    $success = false;
+
+                    $this->set(compact('message', 'success'));
+                    $this->set('_serialize', ['message', 'success']);
+
+                    return;
+                }
+                else
+                {
+                    $this->Session->setFlash('The Ping could not be saved. Please, try again.', 'Flashes/warning');
+                    return $this->redirect(array('action' => 'myPings'));
+                }
             }
         }
 
@@ -302,7 +328,11 @@ class ProjectsController extends AppController {
            $this->set(compact('user', 'users', 'params'));
         }
         $communities = $this->Project->Community->find('list');
-        $this->set(compact('user', 'communities', 'namedParams'));
+
+        //FIXME: include team up
+        $partial = ($kind != 'team_up' && $this->request->is('ajax'));
+
+        $this->set(compact('user', 'communities', 'namedParams', 'partial'));
 //        $assets = $this->Project->Asset->find('list');
 //        $users = $this->Project->User->find('list');
 //        $this->set(compact('assets', 'users'));
