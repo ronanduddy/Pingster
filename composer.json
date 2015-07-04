@@ -1,0 +1,18 @@
+{
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/flaxandteal/IAcl"
+    }
+  ],
+  "config": {
+    "vendor-dir": "Vendor"
+  },
+  "require": {
+    "markstory/acl_extras": "dev-master",
+    "ali1/cakephp-amazon-aws-sdk": "dev-master",
+    "slywalker/boost_cake": "*",
+    "cakephp/debug_kit": "*",
+    "bendo01/IAcl": "dev-F-composer"
+  }
+}
