@@ -89,6 +89,9 @@ Configure::write('Dispatcher.filters', array(
     'CacheDispatcher'
 ));
 
+/**
+ * Configures some Pingster-specific values
+ */
 Configure::load('pingster');
 
 /**
