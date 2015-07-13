@@ -2,10 +2,6 @@ Config/core.php
 Config/database.php
 #Plugin/Amazonsdk/Config/amazon.php
 Plugin/debug_kit/*
-tmp/*
 .htaccess
 webroot/.htaccess
 !empty
-
-Vendor
-Plugin
