@@ -138,7 +138,14 @@ class User extends AppModel {
                 'rule' => array('numeric'),
             ),
         ),
-    );
+
+        'tos' => array(
+            'notEmpty' => array(
+                'rule'     => array('comparison', '!=', 0),
+                'required' => true,
+                'message'  => 'Please check this box if you want to proceed.'
+            ))
+                    );
 
     ///////////////////////////////////////////////////////////////////////////////////
     // custom rules from 

@@ -6,6 +6,8 @@
     <h2 class="page-header">PINGSTER - THE PROTOTYPE</h2>
     <div class="row">
 
+    <img src="/img/banner_promo.png" style="padding: 10px;"></img>
+
         <div class="col-md-6 col-md-offset-3">
             <div class="box box-info">
                 <div class="box-header">

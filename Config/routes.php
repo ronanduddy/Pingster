@@ -28,6 +28,8 @@
 // pingster/ and pingster/home -> Pages/home.ctp
 Router::connect('/', array('controller' => 'home', 'action' => 'index'));
 Router::parseExtensions('json');
+Router::connect('/termsandconditions', array('controller' => 'pages', 'action' => 'display', 'termsandconditions'));
+Router::connect('/privacypolicy', array('controller' => 'pages', 'action' => 'display', 'privacypolicy'));
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */
