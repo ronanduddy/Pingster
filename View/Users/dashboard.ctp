@@ -2,11 +2,11 @@
 //debug($user);
 //debug($current_user);
 ?>
+
+<img src="/mvp/img/banner_promo.png" style="padding: 10px; text-align: center;"></img>
 <section class="content" style="text-align: center">
     <h2 class="page-header">PINGSTER - THE PROTOTYPE</h2>
     <div class="row">
-
-    <img src="/img/banner_promo.png" style="padding: 10px;"></img>
 
         <div class="col-md-6 col-md-offset-3">
             <div class="box box-info">
