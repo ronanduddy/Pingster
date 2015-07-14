@@ -36,7 +36,7 @@ if (!defined('DS')) {
  *
  */
 if (!defined('ROOT')) {
-	define('ROOT', dirname(dirname(dirname(__FILE__))));
+	define('ROOT', dirname(dirname(__FILE__)));
 }
 
 /**
@@ -44,8 +44,10 @@ if (!defined('ROOT')) {
  *
  */
 if (!defined('APP_DIR')) {
-	define('APP_DIR', basename(dirname(dirname(__FILE__))));
+	define('APP_DIR', 'app');
 }
+
+define('TMP', ROOT . DS . 'tmp' . DS);
 
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
@@ -61,7 +63,7 @@ if (!defined('APP_DIR')) {
  * The following line differs from its sibling
  * /lib/Cake/Console/Templates/skel/webroot/index.php
  */
-//define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
+define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'vendor' . DS . 'cakephp' . DS . 'cakephp' . DS . 'lib');
 
 /**
  * Editing below this line should NOT be necessary.

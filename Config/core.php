@@ -227,12 +227,12 @@ require_once dirname(__DIR__) . '/Vendor/autoload.php';
 /**
  * A random string used in security hashing methods.
  */
-	Configure::write('Security.salt', getent('SECURITY_SALT'));
+	Configure::write('Security.salt', getenv('SECURITY_SALT'));
 
 /**
  * A random numeric string (digits only) used to encrypt/decrypt strings.
  */
-	Configure::write('Security.cipherSeed', 'SECURITY_CIPHERSEED');
+	Configure::write('Security.cipherSeed', getenv('SECURITY_CIPHERSEED'));
 
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).

@@ -12,7 +12,9 @@
     "markstory/acl_extras": "dev-master",
     "ali1/cakephp-amazon-aws-sdk": "dev-master",
     "slywalker/boost_cake": "*",
-    "cakephp/debug_kit": "*",
-    "bendo01/IAcl": "dev-F-composer"
+    "cakephp/cakephp": "2.5.*",
+    "cakephp/debug_kit": "2.2.*",
+    "bendo01/IAcl": "dev-F-composer",
+    "loadsys/cakephp-basic-seed": "dev-master"
   }
 }
