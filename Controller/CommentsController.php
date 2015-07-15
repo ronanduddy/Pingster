@@ -241,7 +241,7 @@ class CommentsController extends AppController {
         $group = $user['Group']['name'];
 
         // if pingster tries to edit or delete comment not theirs:
-        if ($group == 'pingsters') {
+        if ($group == 'pingsters' || $group == 'mentors') {
 
             // 1 check if pingster ties to edit or delete comment
             //  1.1 deny if user does not own comment

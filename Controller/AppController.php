@@ -105,8 +105,8 @@ class AppController extends Controller {
         $this->set('Notifications', $notifications);
     }
 
-    public function beforeController() {
-        echo "test";
+    public function afterFilter() {
+        $this->recordActivity();
     }
 
     public function isAuthorized($user) {
@@ -118,6 +118,58 @@ class AppController extends Controller {
         }
 
         return false;
+    }
+
+    public function recordActivity() {
+
+        $result = $this->response->statusCode();
+        $user = $this->Auth->user();
+
+        if($result >= 200 &&
+            $result < 300 &&
+            isset($user['id']) &&
+            !($this->name == "CakeError")&&
+             $this->request->params['pass']
+        )
+        {
+
+            $activity = array();
+            $activity['action'] = $this->request->params['action'];
+
+            if($this->request->is('get')){
+
+                $activity['method'] = "View";
+
+                //If we're viewing a non page like editPing break out
+                if(substr($activity['action'], 0, 4) != 'view'){
+
+                    return true;
+                }
+            }
+            else if($this->request->is('post')){
+
+                $activity['method'] = "Create";
+            }
+
+            else if($this->request->is('put')){
+
+                $activity['method'] = "Update";
+            }
+
+            $activity['model'] = $this->modelClass;
+            $activity['user_id'] = $user['id'];
+            $activity['username'] = $user['username'];
+
+            $activity['action'] = $this->request->params['action'];
+
+            if(isset($this->request->params['pass'][0])){
+
+                $activity['entity_id'] = $this->request->params['pass'][0];
+            }
+            $activity['time'] = date('Y-m-d H:i:s');
+            $this->loadModel('Activity');
+            $this->Activity->store($activity);
+        }
     }
 
 }

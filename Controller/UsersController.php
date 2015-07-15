@@ -112,11 +112,15 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             $this->User->create();
 
-            // get id for pingsters group
-            $this->User->Group->recursive = -1;
-            $pingsters = $this->User->Group->findByName('pingsters', array('fields' => 'Group.id'));
+            // get id for group
 
-            // set to group id for pingster user
+            $this->User->Group->recursive = -1;
+
+            $group = $this->request->data['User']['group_id'] == "Mentor" ? "mentors" : "pingsters";
+
+            $pingsters = $this->User->Group->findByName($group, array('fields' => 'Group.id'));
+
+            // set to group id for user
             $this->request->data['User']['group_id'] = (int) $pingsters['Group']['id'];
 
             if ($this->User->save($this->request->data)) {
@@ -327,19 +331,18 @@ class UsersController extends AppController {
     public function isAuthorized($user) {
 
         $group = $user['Group']['name'];
-
         // is admin
         if ($group == 'admins') {
             return true;
         }
-
+        
         // if pingster
-        if ($group == 'pingsters' && in_array($this->action, array('dashboard', 'checkLoggedIn', 'logout', 'view', 'search'))) {
+        if (($group == 'pingsters' || $group == 'mentors') && in_array($this->action, array('dashboard', 'checkLoggedIn', 'logout', 'view', 'search'))) {
             return true;
         }
 
         // if pingster
-        if ($group == 'pingsters' && in_array($this->action, array('edit', 'delete'))) {
+        if (($group == 'pingsters' || $group == 'mentors') && in_array($this->action, array('edit', 'delete'))) {
 
             // get  id from url
             $userId = (int) $this->request->params['pass'][0];
@@ -363,7 +366,7 @@ class UsersController extends AppController {
             }
         } // end if
         // if pingster
-        if ($group == 'pingsters' && in_array($this->action, array('changePassword'))) {
+        if (($group == 'pingsters' || $group == 'mentors') && in_array($this->action, array('changePassword'))) {
 
             // get user id from url
             $userId = (int) $this->request->params['pass'][0];
@@ -425,6 +428,48 @@ class UsersController extends AppController {
         $this->Acl->allow($group, 'controllers/Users/search');
 
         $this->Acl->allow($group, 'controllers/Search/explore');
+
+        $this->Acl->allow($group, 'controllers/Notifications/markAllRead');
+        $this->Acl->allow($group, 'controllers/Notifications/deleteAll');
+
+        $this->Acl->allow($group, 'controllers/Activities/getAll');
+
+        $this->Acl->allow($group, 'controllers/Comments/commentOnPing');
+        $this->Acl->allow($group, 'controllers/Comments/delete');
+
+
+        // allow mentors to:
+        $group->id = 2;
+        $this->Acl->deny($group, 'controllers');
+
+        $this->Acl->allow($group, 'controllers/Communities/index');
+        $this->Acl->allow($group, 'controllers/Communities/view');
+        $this->Acl->allow($group, 'controllers/Communities/edit');
+
+        $this->Acl->allow($group, 'controllers/Projects/viewPing');
+        $this->Acl->allow($group, 'controllers/Projects/myPings');
+        $this->Acl->allow($group, 'controllers/Projects/addPing');
+        $this->Acl->allow($group, 'controllers/Projects/editPing');
+        $this->Acl->allow($group, 'controllers/Projects/searchPings');
+        $this->Acl->allow($group, 'controllers/Projects/delete');
+        $this->Acl->allow($group, 'controllers/Projects/community');
+        $this->Acl->allow($group, 'controllers/Projects/viewTeamUp');
+        $this->Acl->allow($group, 'controllers/Projects/myTeamUps');
+        $this->Acl->allow($group, 'controllers/Projects/addTeamUp');
+        $this->Acl->allow($group, 'controllers/Projects/editTeamUp');
+        $this->Acl->allow($group, 'controllers/Projects/searchTeamUps');
+        $this->Acl->allow($group, 'controllers/Projects/invitationResponse');
+
+        $this->Acl->allow($group, 'controllers/Users/dashboard');
+        $this->Acl->allow($group, 'controllers/Users/changePassword');
+        $this->Acl->allow($group, 'controllers/Users/checkLoggedIn');
+        $this->Acl->allow($group, 'controllers/Users/logout');
+        $this->Acl->allow($group, 'controllers/Users/register');
+        $this->Acl->allow($group, 'controllers/Users/search');
+
+        $this->Acl->allow($group, 'controllers/Search/explore');
+
+        $this->Acl->allow($group, 'controllers/Activities/getAll');
 
         $this->Acl->allow($group, 'controllers/Notifications/markAllRead');
         $this->Acl->allow($group, 'controllers/Notifications/deleteAll');

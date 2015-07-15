@@ -1,4 +1,29 @@
 <?php //debug($community);           ?>
+
+<script>
+var project_id = <?php echo $project["Project"]["id"]; ?>;
+</script>
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+  Launch demo modal
+</button>
 <div class="col-lg-6">
     <div class="box box-primary">
         <div class="box-header">
@@ -63,8 +88,10 @@
                 if ($current_user['id'] == $project['ProjectsUser']['user_id'] || $current_user['Group']['name'] == 'admins') {
                     echo $this->Html->link('Edit Team Up', array('controller' => 'Projects', 'action' => 'editTeamUp', $project['Project']['id']), array('title' => 'Edit this Team Up?', 'class' => 'btn btn-primary'));
                     echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->params['pass'][0], '?' => array('kind' => $project['Project']['kind'])), array('title' => 'Delete this Ping', 'class' => 'btn btn-danger'), __('Are you sure you want to delete me!?'));
+                    echo $this->element('loveButton');
                 }
                 ?>
+
             </div>
         </div>
     </div>

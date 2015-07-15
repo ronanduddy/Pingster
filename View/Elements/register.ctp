@@ -31,11 +31,17 @@ echo $this->Form->input('User.username', array(
 ));
 
 // for user model:
-// user group_id 
-echo $this->Form->hidden('User.group_id', array(
-    'value' => 8, // for pingster
-));
+// user group_id
 
+?>
+<div class="form-group required"><label for="UserGroupId" class="control-label col-lg-4">Group</label>
+<div class="col-lg-8">
+<select name="data[User][group_id]" class="form-control" id="UserGroupId" required="required">
+<option value="Pingster">Pingster</option>
+<option value="Mentor">Mentor</option>
+</select></div></div>
+
+<?php
 // for user model:
 // password
 echo $this->Form->input('User.password', array(

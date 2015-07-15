@@ -107,9 +107,9 @@ class Project extends AppModel {
     public $hasMany = array(
         'Activity' => array(
             'className' => 'Activity',
-            'foreignKey' => 'project_id',
+            'foreignKey' => 'entity_id',
             'dependent' => false,
-            'conditions' => '',
+            'conditions' => array("Activity.model" => "Project"),
             'fields' => '',
             'order' => '',
             'limit' => '',

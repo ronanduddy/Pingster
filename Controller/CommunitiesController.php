@@ -58,7 +58,7 @@ class CommunitiesController extends AppController {
         // get name of community for view
         $options = array('conditions' => array(
                 'Community.' . $this->Community->primaryKey => $id),
-            'fields' => array('Community.name', 'Community.id'),
+            'fields' => array('Community.name', 'Community.id', 'Community.description'),
             'recursive' => -1,
         );
         $this->set('community', $this->Community->find('first', $options));
@@ -125,11 +125,15 @@ class CommunitiesController extends AppController {
      * @return void
      */
     public function edit($id = null) {
-        if (!$this->Community->exists($id)) {
+
+        $this->Community->id = $id;
+
+        if (!$this->Community->exists()) {
             throw new NotFoundException(__('Invalid community'));
         }
+
         if ($this->request->is(array('post', 'put'))) {
-            if ($this->Community->save($this->request->data)) {
+            if ($this->Community->saveField("description", $this->request->data["Community"]["Description"])) {
                 $this->Session->setFlash(__('The community has been saved.'));
                 return $this->redirect(array('action' => 'index'));
             } else {
@@ -151,7 +155,9 @@ class CommunitiesController extends AppController {
      * @return void
      */
     public function delete($id = null) {
+
         $this->Community->id = $id;
+
         if (!$this->Community->exists()) {
             throw new NotFoundException(__('Invalid community'));
         }
@@ -253,6 +259,22 @@ class CommunitiesController extends AppController {
             $this->Session->setFlash(__('The community could not be deleted. Please, try again.'));
         }
         return $this->redirect(array('action' => 'index'));
+    }
+
+    public function beforeFilter() {
+
+        // check controllers (authorise)
+        $this->Auth->authorize = 'Controller';
+        parent::beforeFilter();
+    }
+
+    public function isAuthorized($user) {
+
+        $group = $user['Group']['name'];
+
+        if ($group == 'admins') {
+            return true;
+        }
     }
 
 }

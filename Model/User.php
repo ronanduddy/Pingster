@@ -322,6 +322,14 @@ class User extends AppModel {
             'className' => 'Notification',
             'foreignKey' => 'user_id',
         ),
+        'Follower' => array(
+            'className' => 'UsersFollower',
+            'foreignKey' => 'user_id',
+        ),
+        'Follow' => array(
+            'className' => 'UsersFollower',
+            'foreignKey' => 'follower_id',
+        )
     );
 
 
@@ -357,7 +365,7 @@ class User extends AppModel {
             'offset' => '',
             'finderQuery' => '',
             'with' => 'UsersUser'
-        )
+        ),
     );
     public $belongsTo = array(
         'Group' => array(

@@ -6,7 +6,7 @@
             <h3 class="box-title"><?php echo $user['User']['username'] ?></h3>
         </div>
         <div class="box-body">
-
+            <h4>Followers</h4> 1
             <?php
             echo sprintf('<h4>Current Ping Power</h4> <p>%s</p>', h($user['User']['ping_power']));
 
@@ -24,12 +24,15 @@
             ?>
 
         </div>
-        <div class="box-footer" style="text-align: right">            
+        <div class="box-footer" style="text-align: right">
             <div class="btn-group">
                 <?php
                 if ($current_user['id'] == $user['User']['id'] || $current_user['Group']['name'] == 'admin') {
                     echo $this->Html->link('Edit Profile', array('controller' => 'users', 'action' => 'edit', $user['User']['id']), array('title' => 'Edit your profile', 'class' => 'btn btn-default'));
                     echo $this->Form->postLink(__('Delete Account'), array('action' => 'delete', $user['User']['id']), array('class' => 'btn btn-danger'), __('Are you sure you want to delete # %s?', $user['User']['id']));
+                }
+                else {
+                    echo ' <i class="btn btn-success">Follow</i> ';
                 }
                 ?>             
             </div>

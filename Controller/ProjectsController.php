@@ -13,6 +13,100 @@ class ProjectsController extends AppController {
 
     public $components = array('Paginator', 'Session');
 
+    public function loveProject() {
+
+        $user = $this->Auth->user();
+        $valid = isset($user['id']) &&
+          isset($this->request->query['project_id']);
+
+        if ($valid) {
+
+            $user_id = $user['id'];
+            $project_id = $this->request->query['project_id'];
+
+            $findOptions = array(
+
+                "fields" => array(
+                    "loves",
+                    "kind"
+                 ),
+                 "conditions" => array(
+                    "Project.id" => $project_id
+                 ),
+                 "recursive" => 1
+            );
+
+            $Project = $this->Project->find('first', $findOptions);
+            $users = json_decode($Project["Project"]["loves"], true);
+
+            if(isset($users[$user_id])){
+                unset($users[$user_id]);
+            }
+            else{
+                $users[$user_id] = array("username" => $user["username"], "email" => $user["email"]);
+                foreach($Project["User"] as $project_user){
+
+                    if($project_user['ProjectsUser']['accepted_invitation']){
+
+                        if($Project["Project"]["kind"] == 'ping'){
+
+                            $msg = $user["username"] . " loved your Ping!";
+                            $msg .= " <a id='notification_url' href='/Projects/viewPing/" . $Project["Project"]["id"] . "'>Check it out!</a> ";
+                        }
+                        else if($Project["Project"]["kind"] == 'team_up'){
+
+                            $msg = $user["username"] . " loved your Team Up!";
+                            $msg .= " <a id='notification_url' href='/Projects/viewTeamUp/" . $Project["Project"]["id"] . "'>Check it out!</a> ";
+                        }
+                        else{
+                            $msg = $user["username"] . " loved your Project!";
+                        }
+                        $this->Project->User->Notification->msg($project_user["id"], $msg);
+                    }
+                }
+
+            }
+
+            $this->Project->id = $project_id;
+            $this->Project->set(array(
+                "loves" => json_encode($users)
+                )
+            );
+
+            $this->Project->save();
+
+            $this->set('Loves', (array) $users);
+            $this->set('_serialize', 'Loves');
+        }
+
+    }
+
+    public function getLoves() {
+
+        $valid = isset($this->request->query['project_id']);
+
+        if ($valid){
+
+            $project_id = $this->request->query['project_id'];
+
+            $findOptions = array(
+
+                "fields" => array(
+                    "loves"
+                 ),
+                 "conditions" => array(
+                    "Project.id" => $project_id
+                 ),
+                 "recursive" => -1
+            );
+
+            $Project = $this->Project->find('first', $findOptions);
+            $users = json_decode($Project["Project"]["loves"]);
+            $this->set('Loves', (array) $users);
+            $this->set('_serialize', 'Loves');
+        }
+    }
+
     public function myTeamUps($id=null) {
 
         $this->myProjects($id, "team_up");
@@ -588,7 +682,7 @@ class ProjectsController extends AppController {
         $group = $user['Group']['name'];
         
         // if pingster tries to edit or delete ping not theirs:
-        if ($group == 'pingsters') {
+        if (($group == 'pingsters' || $group == 'mentors') ) {
 
             if (in_array($this->action, array('searchPings', 'searchTeamUps', 'invitationResponse'))) {
                 return true;
@@ -684,7 +778,8 @@ class ProjectsController extends AppController {
 
         $type='ping';
 
-        $options = array('fields' => array('title', 'description', 'image_url'));
+        $options = array('fields' => array('title', 'description', 'image_url', 'loves', 'tags'),
+                 "recursive" => 1);
 
         if(isset($this->request->query['term']))
         {
@@ -695,7 +790,8 @@ class ProjectsController extends AppController {
                 'Project.status' => 'public',
                 "OR" => array(
                     "Project.title LIKE" => '%'.$term.'%',
-                    "Project.description LIKE" => '%'.$term.'%'
+                    "Project.description LIKE" => '%'.$term.'%',
+                    "Project.tags LIKE" => '%'.$term.'%'
                 )
             );
 
@@ -714,7 +810,8 @@ class ProjectsController extends AppController {
 
         $user = $this->Auth->user();
 
-        $options = array('fields' => array('title', 'description', 'image_url'));
+        $options = array('fields' => array('title', 'description', 'image_url', 'loves', 'tags'),
+                 "recursive" => -1);
 
         if(isset($this->request->query['term']))
         {
