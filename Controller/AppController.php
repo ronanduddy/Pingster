@@ -106,8 +106,12 @@ class AppController extends Controller {
     }
 
     public function afterFilter() {
+
         $this->recordActivity();
-    }
+      }
+      
+
+
 
     public function isAuthorized($user) {
         // default deny all unless otherwise specified in ACL
@@ -128,8 +132,7 @@ class AppController extends Controller {
         if($result >= 200 &&
             $result < 300 &&
             isset($user['id']) &&
-            !($this->name == "CakeError")&&
-             $this->request->params['pass']
+            !($this->name == "CakeError")
         )
         {
 
@@ -166,10 +169,58 @@ class AppController extends Controller {
 
                 $activity['entity_id'] = $this->request->params['pass'][0];
             }
+            else if(isset($this->Comment->id)){
+                $activity['entity_id'] = $this->Comment->id;
+            }
+
+            if(isset($activity['entity_id'])){
+
+                $activity['time'] = date('Y-m-d H:i:s');
+                $this->loadModel('Activity');
+                $this->Activity->store($activity);
+            }
+
             $activity['time'] = date('Y-m-d H:i:s');
             $this->loadModel('Activity');
             $this->Activity->store($activity);
         }
+    }
+
+
+    public function encrypt_token($string){
+
+        $key = base64_encode("mU1xoJ05VJJ8o1YRYF7yta3GuMpfcsqM");
+        $ivSize = openssl_cipher_iv_length("aes-256-cbc");
+        $iv = openssl_random_pseudo_bytes($ivSize);
+
+        $ciphertext = openssl_encrypt(
+            $string,
+            "aes-256-cbc",
+            $key,
+            OPENSSL_RAW_DATA,
+            $iv
+        );
+
+        return base64_encode($iv . $ciphertext);
+
+    }
+
+    public function validate_token($token, $string){
+
+        $key = base64_encode("mU1xoJ05VJJ8o1YRYF7yta3GuMpfcsqM");
+        $token = base64_decode($token, true);
+
+        $ivSize = openssl_cipher_iv_length("aes-256-cbc");
+        $iv = mb_substr($token, 0, $ivSize, '8bit');
+        $ciphertext = mb_substr($token, $ivSize, null, '8bit');
+
+        return $string == openssl_decrypt(
+            $ciphertext,
+            "aes-256-cbc",
+            $key,
+            OPENSSL_RAW_DATA,
+            $iv
+        );
     }
 
 }

@@ -211,4 +211,14 @@ class Project extends AppModel {
         )
     );
 
+    public function getViews($id=null){
+
+        $id = $id == null ? $this->id : $id;
+        return $this->Activity->find('count', array(
+            'conditions' => array('Activity.entity_id' => $id,
+                'Activity.method' => 'View',
+                'Activity.model' => 'Project')
+        ));
+    }
+
 }

@@ -272,7 +272,7 @@ class CommunitiesController extends AppController {
 
         $group = $user['Group']['name'];
 
-        if ($group == 'admins') {
+        if ($group == 'admins' || $group == 'mentors') {
             return true;
         }
     }

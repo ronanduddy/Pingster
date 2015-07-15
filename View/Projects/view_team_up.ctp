@@ -21,15 +21,12 @@ var project_id = <?php echo $project["Project"]["id"]; ?>;
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-  Launch demo modal
-</button>
 <div class="col-lg-6">
     <div class="box box-primary">
         <div class="box-header">
             <i class="fa fa-rocket"></i>
             <h3 class="box-title">
-                <?php echo sprintf('%s <small>%s %s</small>', h($project['Project']['title']), h(ucfirst($project['Project']['status'])), h(ucfirst($project['Project']['kind']))); ?>
+                <?php echo sprintf('%s <small>%s %s - %s Views</small>', h($project['Project']['title']), h(ucfirst($project['Project']['status'])), h(ucfirst($project['Project']['kind'])), $Views); ?>
             </h3>
         </div>
         <div class="box-body">
@@ -98,9 +95,19 @@ var project_id = <?php echo $project["Project"]["id"]; ?>;
 </div>
 
 <?php
+
+    $current_user_accepted = false;
     foreach($ProjectUsers as $ProjectUser){
-        if($current_user['id'] == $ProjectUser['id'] && !$ProjectUser['accepted_invitation']){
-            echo $this->element('showInvitation');
+        if($current_user['id'] == $ProjectUser['id']){
+
+            if(!$ProjectUser['accepted_invitation']){
+                echo $this->element('showInvitation');
+            }
+            else{
+                $current_user_accepted = true;
+            }
+
+            break;
         }
     }
 ?>
@@ -142,4 +149,6 @@ var project_id = <?php echo $project["Project"]["id"]; ?>;
 </div>
 
 <?php
-echo $this->element('addComment');
+if($current_user_accepted){
+    echo $this->element('addComment');
+}

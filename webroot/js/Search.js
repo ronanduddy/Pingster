@@ -51,7 +51,7 @@ $(document).ready(function(){
                         var no_loves = loves ? Object.keys(loves).length : 0;
                         var team_up = "<div class='masonryItem'>" +
                             "<div class='box box-primary'> <div class='box-header'><h4 class='box-title'>" +
-                            "<a href='" + webroot + "/Projects/viewPing/" +
+                            "<a href='" + webroot + "/Projects/viewTeamUp/" +
                             value.Project.id + "'>" + value.Project.title +
                             "</a></h4></div>" + "<div class='box-body'><img style='max-height: 100px; margin-right: 5px' alt='Project Image' src='" + value.Project.image_url + "'>"
                             + value.Project.description + " </div><div class='box-footer'>" + no_loves + " loves";

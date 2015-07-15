@@ -39,6 +39,19 @@ class Notification extends AppModel {
         $data['Notification']['target'] = $target;
 
         if ($this->send($data)) {
+            $this->loadModule("User");
+            $user = $this->User->find('first', array(
+                'conditions' => array('id' => $userId)));
+
+            if($user["verified_email"] === true){
+
+                $Email = new CakeEmail();
+                $Email->from(array('notification@pingster.org' => 'Pingster Notifications'))
+                        ->to($user['email'])
+                        ->subject('New Notification!')
+                        ->send($message);
+            }
+
             return true;
         } else {
             return false;

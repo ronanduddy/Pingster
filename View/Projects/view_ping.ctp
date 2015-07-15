@@ -4,7 +4,7 @@
         <div class="box-header">
             <i class="fa fa-folder-open-o"></i>
             <h3 class="box-title">
-                <?php echo sprintf('%s <small>%s %s</small>', h($project['Project']['title']), h(ucfirst($project['Project']['status'])), h(ucfirst($project['Project']['kind']))); ?>
+                <?php echo sprintf('%s <small>%s %s - %s Views</small>', h($project['Project']['title']), h(ucfirst($project['Project']['status'])), h(ucfirst($project['Project']['kind'])), $Views); ?>
             </h3>
         </div>
         <div class="box-body">

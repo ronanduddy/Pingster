@@ -6,8 +6,7 @@
             <h3 class="box-title"><?php echo $user['User']['username'] ?></h3>
         </div>
         <div class="box-body">
-            <h4>Followers</h4> 1
-            <?php
+            <h4>Followers</h4><?php echo count($user['Follower']);
             echo sprintf('<h4>Current Ping Power</h4> <p>%s</p>', h($user['User']['ping_power']));
 
             if ($current_user['id'] == $user['User']['id'] || $current_user['Group']['name'] == 'admin') {
@@ -32,7 +31,7 @@
                     echo $this->Form->postLink(__('Delete Account'), array('action' => 'delete', $user['User']['id']), array('class' => 'btn btn-danger'), __('Are you sure you want to delete # %s?', $user['User']['id']));
                 }
                 else {
-                    echo ' <i class="btn btn-success">Follow</i> ';
+                    echo $this->element('userFollowButton');
                 }
                 ?>             
             </div>

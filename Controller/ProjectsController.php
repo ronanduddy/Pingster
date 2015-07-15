@@ -205,7 +205,7 @@ class ProjectsController extends AppController {
         );
 
         // find project and set into view
-        $this->Project->recursive = -1;
+        $this->Project->recursive = 1;
         $this->set('project', $this->Project->ProjectsUser->find('first', $options));
 
         // getting comments
@@ -268,6 +268,7 @@ class ProjectsController extends AppController {
 
             $this->set('ProjectUsers', $ProjectUsers);
         }
+        $this->set('Views', $this->Project->getViews($id));
 
     }
 
@@ -320,7 +321,12 @@ class ProjectsController extends AppController {
                     $this->Project->set('image', $name);
 
                     // record
-                    $this->Project->save();
+                    if($this->Project->save()){
+
+                        $this->request->params['pass'][] = $this->Project->id;
+                        $this->afterFilter();
+                    }
+
 
                     // community project is member of
                     if ($kind == 'ping') {
@@ -361,7 +367,6 @@ class ProjectsController extends AppController {
                             }
                         }
                     }
-
 
                     $this->Session->setFlash('Ping created.', 'Flashes/success');
                     $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
@@ -480,6 +485,7 @@ class ProjectsController extends AppController {
 
                 // update
                 $this->Project->save();
+
                 $this->Session->setFlash('The Ping has been edited..', 'Flashes/success');
 
                 $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
@@ -535,7 +541,7 @@ class ProjectsController extends AppController {
                         }
 
                         $new_project_members = explode(',',$this->request->data['Project']['user_ids']);
-                        $owner = $this->Auth->user();
+                        $current_user = $this->Auth->user();
 
                         foreach($new_project_members as $member){
 
@@ -543,34 +549,34 @@ class ProjectsController extends AppController {
 
                             if($user_id = intval($member)){
 
-                                if(isset($owner_id) && $user_id == $owner_id){
-                                    break;
-                                }
+                                if(!(isset($owner_id) && $user_id == $owner_id)){
 
-                                if(!in_array($user_id, $old_project_members)){
-                                    $url = '/Projects/viewTeamUp/' . $project['Project']['id'];
-                                    $message = $owner['username'] . " wants to team up! <a id='notification_url' href='".$url."'>Check it out!</a>";
-                                    $this->Project->User->Notification->msg($user_id, $message);
-                                }
-                                else{
+                                    if(!in_array($user_id, $old_project_members)){
+                                        $url = '/Projects/viewTeamUp/' . $project['Project']['id'];
+                                        $message = $current_user['username'] . " wants to team up! <a id='notification_url' href='".$url."'>Check it out!</a>";
+                                        $this->Project->User->Notification->msg($user_id, $message);
+                                    }
+                                    else{
 
-                                    $accepted_invitation =  isset($accepted_invitations[$user_id]) && $accepted_invitations[$user_id];
+                                        $accepted_invitation =  isset($accepted_invitations[$user_id]) && $accepted_invitations[$user_id];
+                                    }
+                                    $this->Project->ProjectsUser->create();
+                                    $this->Project->ProjectsUser->save(
+                                        array(
+                                            'project_id' => $project['Project']['id'],
+                                            'user_id' => $user_id,
+                                            'user_role' => 'collaborator',
+                                            'accepted_invitation' => $accepted_invitation
+                                        )
+                                    );
                                 }
-                                $this->Project->ProjectsUser->create();
-                                $this->Project->ProjectsUser->save(
-                                    array(
-                                        'project_id' => $project['Project']['id'],
-                                        'user_id' => $user_id,
-                                        'user_role' => 'collaborator',
-                                        'accepted_invitation' => $accepted_invitation
-                                    )
-                                );
                             }
                         }
                     }
                 }
 
                 if ($this->Project->save()) {
+                    $this->afterFilter();
                     $this->Session->setFlash('The Ping has been edited.', 'Flashes/success');
                     $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
                     if ($user['group_id'] == 1) {
@@ -779,7 +785,7 @@ class ProjectsController extends AppController {
         $type='ping';
 
         $options = array('fields' => array('title', 'description', 'image_url', 'loves', 'tags'),
-                 "recursive" => 1);
+                 "recursive" => 0);
 
         if(isset($this->request->query['term']))
         {
@@ -811,7 +817,7 @@ class ProjectsController extends AppController {
         $user = $this->Auth->user();
 
         $options = array('fields' => array('title', 'description', 'image_url', 'loves', 'tags'),
-                 "recursive" => -1);
+                 "recursive" => 0);
 
         if(isset($this->request->query['term']))
         {

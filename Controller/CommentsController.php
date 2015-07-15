@@ -123,6 +123,7 @@ class CommentsController extends AppController {
             // create comment and see if it can be saved.
             $this->Comment->create();
             if (!empty($this->request->data) && $this->Comment->save($this->request->data['Comment'])) {
+                $this->afterFilter();
                 $this->Session->setFlash('The comment has been saved.', 'Flashes/success');
             } else {
                 $this->Session->setFlash('The comment could not be saved. Please, try again.', 'Flashes/warning');
