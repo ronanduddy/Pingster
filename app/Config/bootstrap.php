@@ -121,4 +121,5 @@ CakePlugin::load('DebugKit');
 //CakePlugin::load('Upload');
 CakePlugin::load('Amazonsdk');
 CakePlugin::load('AclExtras');
-CakePlugin::load('Iacl');
+CakePlugin::load('IAcl');
+CakePlugin::load('BasicSeed');
