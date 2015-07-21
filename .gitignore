@@ -1,5 +1,5 @@
-#Plugin/Amazonsdk/Config/amazon.php
-#Plugin/debug_kit/*
+Plugin
+Vendor
 .htaccess
 webroot/.htaccess
 !empty
