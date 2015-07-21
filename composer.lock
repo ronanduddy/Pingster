@@ -37,16 +37,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "2.8.13",
+            "version": "2.8.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8512d9f2accdd88ee05d9848db4f05279124de64"
+                "reference": "cc3f63f695e15e4b1e6ee0e090c32bfde78115a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8512d9f2accdd88ee05d9848db4f05279124de64",
-                "reference": "8512d9f2accdd88ee05d9848db4f05279124de64",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cc3f63f695e15e4b1e6ee0e090c32bfde78115a4",
+                "reference": "cc3f63f695e15e4b1e6ee0e090c32bfde78115a4",
                 "shasum": ""
             },
             "require": {
@@ -96,7 +96,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2015-07-09 18:07:12"
+            "time": "2015-07-14 20:48:28"
         },
         {
             "name": "bendo01/iacl",
