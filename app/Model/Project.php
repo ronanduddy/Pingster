@@ -34,6 +34,46 @@ class Project extends AppModel {
 //    );
 
     /**
+     * Retrieve representations of status enum (public/private)
+     *
+     * @param int
+     * @retval string
+     */
+    public static function statuses($value = null) {
+        $statuses = array(
+            self::STATUS_INVALID => __("[invalid status]"),
+            self::STATUS_PUBLIC => __("Public"),
+            self::STATUS_PRIVATE => __("Private")
+        );
+
+        return self::enum($statuses, $value, self::STATUS_INVALID);
+    }
+
+    const STATUS_INVALID = 0;
+    const STATUS_PUBLIC = 1;
+    const STATUS_PRIVATE = 2;
+
+    /**
+     * Retrieve representations of kind enum
+     *
+     * @param int
+     * @retval string
+     */
+    public static function kinds($value = null) {
+        $kinds = array(
+            self::KIND_INVALID => __("[invalid kind]"),
+            self::KIND_PING => __("Ping"),
+            self::KIND_TEAM_UP => __("Team Up")
+        );
+
+        return self::enum($kinds, $value, self::KIND_INVALID);
+    }
+
+    const KIND_INVALID = 0;
+    const KIND_PING = 1;
+    const KIND_TEAM_UP = 2;
+
+    /**
      * Display field 
      *
      * @var string
@@ -79,20 +119,14 @@ class Project extends AppModel {
         // kind
         'kind' => array(
             'valid' => array(
-                'rule' => array('inList', array(
-                        'Ping' => 'ping',
-                        'Team Up' => 'team_up'),
-                ),
+                'rule' => array('range', array(1, 2)),
                 'message' => 'Project must be a Ping or Team Up',
             )
         ),
         // status
         'status' => array(
             'valid' => array(
-                'rule' => array('inList', array(
-                        'Private' => 'private',
-                        'Public' => 'public'),
-                ),
+                'rule' => array('range', array(1, 2)),
                 'message' => 'Status must be either public or private',
             )
         ),

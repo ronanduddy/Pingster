@@ -1,6 +1,7 @@
 <?php
 
 App::uses('AppController', 'Controller');
+App::uses('Project', 'Model');
 
 /**
  * Projects Controller
@@ -16,7 +17,7 @@ class ProjectsController extends AppController {
 
     public function myTeamUps($id=null) {
 
-        $this->myProjects($id, "team_up");
+        $this->myProjects($id, Project::KIND_TEAM_UP);
     }
 
     public function viewTeamUp($id = null){
@@ -26,16 +27,16 @@ class ProjectsController extends AppController {
 
     public function addTeamUp() {
 
-        $this->addProject('team_up');
+        $this->addProject(Project::KIND_TEAM_UP);
     }
 
     public function editTeamUp($id=null){
 
-        $this->editProject($id, 'team_up');
+        $this->editProject($id, Project::KIND_TEAM_UP);
     }
     public function myPings($id=null) {
 
-        $this->myProjects($id, 'ping');
+        $this->myProjects($id, Project::KIND_PING);
     }
 
     public function viewPing($id = null){
@@ -45,7 +46,7 @@ class ProjectsController extends AppController {
 
     public function addPing($id=null){
 
-        $this->addProject('ping');
+        $this->addProject(Project::KIND_PING);
     }
 
     public function editPing($id=null){
@@ -80,7 +81,7 @@ class ProjectsController extends AppController {
     }
 
     // list all of the user's pings
-    public function myProjects($id = null, $kind="ping") {
+    public function myProjects($id = null, $kind=Project::KIND_PING) {
         // get user from auth object. 
         $user = $this->Auth->user();
 
@@ -183,7 +184,7 @@ class ProjectsController extends AppController {
     }
 
     // adds a ping 
-    public function addProject($kind='ping') {
+    public function addProject($kind=Project::KIND_PING) {
         $user = $this->Auth->user();
         $s3_bucket = Configure::read('Pingster.s3_bucket');
         $s3_region = constant('AmazonS3::' . Configure::read('Pingster.s3_region'));
@@ -232,7 +233,7 @@ class ProjectsController extends AppController {
                     $this->Project->save();
 
                     // community project is member of
-                    if ($kind == 'ping') {
+                    if ($kind == Project::KIND_PING) {
 
                         $community_id = $this->request->data['Project']['community'];
                         if (isset($community_id) && $community_id != NULL) {
@@ -240,7 +241,7 @@ class ProjectsController extends AppController {
                             $this->Project->CommunitiesProject->save(array('project_id' => $this->Project->id, 'community_id' => $community_id));
                         }
                     }
-                    elseif ($kind == 'team_up') {
+                    elseif ($kind == Project::KIND_PING) {
 
                         if (isset($this->request->data['Project']['user_ids'])){
 
@@ -256,7 +257,7 @@ class ProjectsController extends AppController {
                                         array(
                                             'project_id' => $this->Project->id,
                                             'user_id' => $user_id,
-                                            'user_role' => 'collaborator',
+                                            'user_role' => ProjectsUser::USER_ROLE_COLLABORATOR,
                                             'accepted_invitation' => 0
                                         )
                                     );
@@ -285,7 +286,7 @@ class ProjectsController extends AppController {
                     else
                     {
                       $this->Session->setFlash($message, 'Flashes/success');
-                      $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
+                      $action = $kind == Project::KIND_PING ? 'viewPing' : 'viewTeamUp';
                       if ($user['group_id'] == 1) {
                           return $this->redirect(array('action' => $action, $this->Project->id, 'admin' => false));
                       } else {
@@ -317,7 +318,7 @@ class ProjectsController extends AppController {
             $namedParams = $this->request->params['named'];
         }
 
-        if($kind == 'team_up'){
+        if($kind == Project::KIND_TEAM_UP){
 
            $users = $this->Project->User->find(
            'list',
@@ -330,7 +331,7 @@ class ProjectsController extends AppController {
         $communities = $this->Project->Community->find('list');
 
         //FIXME: include team up
-        $partial = ($kind != 'team_up' && $this->request->is('ajax'));
+        $partial = ($kind != Project::KIND_TEAM_UP && $this->request->is('ajax'));
 
         $this->set(compact('user', 'communities', 'namedParams', 'partial'));
 //        $assets = $this->Project->Asset->find('list');
@@ -346,7 +347,7 @@ class ProjectsController extends AppController {
         $this->editPing($id);
     }
 
-    public function editProject($id = null, $kind = 'ping') {
+    public function editProject($id = null, $kind = Projects::KIND_PING) {
         $user = $this->Auth->user();
         $s3_bucket = Configure::read('Pingster.s3_bucket');
         $s3_region = constant('AmazonS3::' . Configure::read('Pingster.s3_region'));
@@ -401,7 +402,7 @@ class ProjectsController extends AppController {
                 $this->Project->set('id', $this->request->data['Project']['id']);
                 $this->Project->set('tags', $this->request->data['Project']['tags']);
 
-                if ($kind == 'ping') {
+                if ($kind == Projects::KIND_PING) {
                     // update community project is member of
                     $community_id = $this->request->data['Project']['community'];
                     // debug( $this->request->data); exit();
@@ -423,7 +424,7 @@ class ProjectsController extends AppController {
                 $this->Project->save();
                 $this->Session->setFlash('The Ping has been edited..', 'Flashes/success');
 
-                $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
+                $action = $kind == Projects::KIND_PING ? 'viewPing' : 'viewTeamUp';
                 if ($user['group_id'] == 1) {
                     return $this->redirect(array('action' => $action, $id, 'admin' => false));
                 } else {
@@ -438,7 +439,7 @@ class ProjectsController extends AppController {
                 $this->Project->set('id', $this->request->data['Project']['id']);
                 $this->Project->set('tags', $this->request->data['Project']['tags']);
 
-                if($kind == 'ping'){
+                if($kind == Project::KIND_PING){
                 // update community project is member of
                     $community_id = $this->request->data['Project']['community'];
                     // debug( $this->request->data); exit();
@@ -454,7 +455,7 @@ class ProjectsController extends AppController {
                         }
                     } // end if
                 }
-                elseif ($kind == 'team_up') {
+                elseif ($kind == Project::KIND_TEAM_UP) {
 
                     if (isset($this->request->data['Project']['user_ids'])){
 
@@ -464,12 +465,12 @@ class ProjectsController extends AppController {
                         foreach($project['ProjectsUser'] as $member){
                             $accepted_invitations[$member['user_id']] = $member['accepted_invitation'];
 
-                            if($member["user_role"] == "collaborator"){
+                            if($member["user_role"] == ProjectsUser::USER_ROLE_COLLABORATOR){
 
                                 $this->Project->ProjectsUser->delete($member['id']);
                                 $old_project_members[] = $member['user_id'];
                             }
-                            elseif($member["user_role"] == "owner"){
+                            elseif($member["user_role"] == ProjectsUser::USER_ROLE_OWNER){
 
                                 $owner_id = $member["user_id"];
                             }
@@ -502,7 +503,7 @@ class ProjectsController extends AppController {
                                     array(
                                         'project_id' => $project['Project']['id'],
                                         'user_id' => $user_id,
-                                        'user_role' => 'collaborator',
+                                        'user_role' => ProjectsUser::USER_ROLE_COLLABORATOR,
                                         'accepted_invitation' => $accepted_invitation
                                     )
                                 );
@@ -513,7 +514,7 @@ class ProjectsController extends AppController {
 
                 if ($this->Project->save()) {
                     $this->Session->setFlash('The Ping has been edited.', 'Flashes/success');
-                    $action = $kind == 'ping' ? 'viewPing' : 'viewTeamUp';
+                    $action = $kind == Project::KIND_PING ? 'viewPing' : 'viewTeamUp';
                     if ($user['group_id'] == 1) {
                         return $this->redirect(array('action' => $action, $id, 'admin' => false));
                     } else {
@@ -603,9 +604,9 @@ class ProjectsController extends AppController {
 
 
         // redirect to ping or team up page going by data in POST
-        if ($this->request->query['kind'] === 'ping') {
+        if ($this->request->query['kind'] === Project::KIND_PING) {
             return $this->redirect(array('action' => 'myPings'));
-        } elseif ($this->request->query['kind'] === 'team_up') {
+        } elseif ($this->request->query['kind'] === Project::KIND_TEAM_UP) {
             return $this->redirect(array('action' => 'myTeamUps'));
         } else {
             return $this->redirect(array('action' => 'index'));
@@ -687,7 +688,7 @@ class ProjectsController extends AppController {
                         'AND' => array(
                             'ProjectsUser.user_id' => $user['id'],
                             'ProjectsUser.project_id' => $projectId,
-                            'ProjectsUser.user_role' => 'owner'
+                            'ProjectsUser.user_role' => ProjectsUser::USER_ROLE_OWNER
                         )
                     ),
                 );
@@ -726,11 +727,11 @@ class ProjectsController extends AppController {
                 }
 
                 // if public, return true (any one can view
-                if ($result['Project']['status'] === 'public') {
+                if ($result['Project']['status'] === Project::STATUS_PUBLIC) {
                     return true;
                 }
                 // if private return false
-                if ($result['Project']['status'] === 'private' && $result['ProjectsUser']['user_id'] != $user['id']) {
+                if ($result['Project']['status'] === Project::STATUS_PRIVATE && $result['ProjectsUser']['user_id'] != $user['id']) {
                     $this->Auth->authError = 'That is a private project and you do not own it';
                     $this->Auth->unauthorizedRedirect = array('action' => 'myPings');
                     return false;
@@ -754,7 +755,7 @@ class ProjectsController extends AppController {
 
     public function searchPings(){
 
-        $type='ping';
+        $type = Project::KIND_PING;
 
         $options = array('fields' => array('title', 'description', 'image_url'));
 
@@ -764,7 +765,7 @@ class ProjectsController extends AppController {
 
             $options['conditions'] = array(
                 'Project.kind' => $type,
-                'Project.status' => 'public',
+                'Project.status' => Project::STATUS_PUBLIC,
                 "OR" => array(
                     "Project.title LIKE" => '%'.$term.'%',
                     "Project.description LIKE" => '%'.$term.'%'
@@ -782,7 +783,7 @@ class ProjectsController extends AppController {
 
     public function searchTeamUps(){
 
-        $type='team_up';
+        $type = Project::KIND_TEAM_UP;
 
         $user = $this->Auth->user();
 
@@ -795,7 +796,7 @@ class ProjectsController extends AppController {
             $options['conditions'] = array(
                 'Project.kind' => $type,
                 "OR" => array(
-                    "Project.status" => 'public',
+                    "Project.status" => Project::STATUS_PUBLIC,
                     "ProjectsUser.user_id" => $user['id'],
                     "User.id" => $user['id']
                 ),

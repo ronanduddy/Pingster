@@ -27,7 +27,7 @@ echo $this->element('Admin/head', array(
     </dd>
     <dt><?php echo __('Asset Status'); ?></dt>
     <dd>
-        <?php echo h($asset['Asset']['asset_status']); ?>
+        <?php echo h(Asset::statuses($asset['Asset']['asset_status'])); ?>
         &nbsp;
     </dd>
     <dt><?php echo __('Created'); ?></dt>
@@ -97,12 +97,12 @@ echo $this->element('Admin/head', array(
                 <?php foreach ($asset['Project'] as $project): ?>
                     <tr>
                         <td><?php echo $project['id']; ?></td>
-                        <td><?php echo $project['kind']; ?></td>
+                        <td><?php echo Project::kinds($project['kind']); ?></td>
                         <td><?php echo $project['title']; ?></td>
                         <td><?php echo $project['description']; ?></td>
                         <td><?php echo $project['image']; ?></td>
                         <td><?php echo $project['image_url']; ?></td>
-                        <td><?php echo $project['status']; ?></td>
+                        <td><?php echo Project::statuses($project['status']); ?></td>
                         <td><?php echo $project['modified']; ?></td>
                         <td><?php echo $project['created']; ?></td>
                         <td class="actions">

@@ -65,7 +65,7 @@
                                 <td><?php echo h($asset['Assets']['id']); ?>&nbsp;</td>
                                 <td><?php echo h($asset['Assets']['asset']); ?>&nbsp;</td>
                                 <td><?php echo h($asset['Assets']['asset_url']); ?>&nbsp;</td>
-                                <td><?php echo h($asset['Assets']['asset_status']); ?>&nbsp;</td>
+                                <td><?php echo h(Asset::statuses($asset['Assets']['asset_status'])); ?>&nbsp;</td>
                                 <td><?php echo h($asset['Assets']['created']); ?>&nbsp;</td>
                             </tr>
 <?php endforeach; ?>

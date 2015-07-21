@@ -62,7 +62,7 @@
                         <i class="fa fa-folder-o"></i>
                         <h3 class="box-title">
                             <?php echo h(preg_replace('/(\w+)([A-Z])/U', '\\1 \\2', ucfirst($projectData['Project']['title']))); ?>
-                            <small><?php echo h(ucfirst($projectData['Project']['status']) . ' ' . ucfirst($projectData['Project']['kind'])); ?></small>
+                            <small><?php echo h(Project::statuses($projectData['Project']['status']) . ' ' . Project::kinds($projectData['Project']['kind'])); ?></small>
                         </h3>
                     </div>
 

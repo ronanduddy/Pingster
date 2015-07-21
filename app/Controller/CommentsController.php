@@ -238,9 +238,9 @@ class CommentsController extends AppController {
           $this->Session->setFlash($message, $success ? 'Flashes/success' : 'Flashes/warning');
 
           // redirect to ping or team up going by data in POST
-          if ($this->request->query['kind'] === 'ping') {
+          if ($this->request->query['kind'] === Project::KIND_PING) {
               return $this->redirect(array('controller' => 'Projects', 'action' => 'viewPing', $this->request->query['projectId']));
-          } elseif ($this->request->query['kind'] === 'team_up') {
+          } elseif ($this->request->query['kind'] === Project::KIND_TEAM_UP) {
               return $this->redirect(array('controller' => 'Projects', 'action' => 'viewTeamUp', $this->request->query['projectId']));
           } else {
               return $this->redirect(array('action' => 'index'));
@@ -317,11 +317,11 @@ class CommentsController extends AppController {
                 }
 
                 // if public, return true (any one can view
-                if ($result['Project']['status'] === 'public') {
+                if ($result['Project']['status'] === Project::STATUS_PUBLIC) {
                     return true;
                 }
                 // if private return false
-                if ($result['Project']['status'] === 'private' && $result['ProjectsUser'][0]['user_id'] != $user['id']) {
+                if ($result['Project']['status'] === Project::STATUS_PRIVATE && $result['ProjectsUser'][0]['user_id'] != $user['id']) {
                     $this->Auth->authError = 'That is a private project and you do not own it';
                     $this->Auth->unauthorizedRedirect = '/';
                     return false;

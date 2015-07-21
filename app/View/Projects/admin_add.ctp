@@ -22,7 +22,7 @@ echo $this->Form->input('User.id', array('value' => $user['id']));
 
 // for project model:            
 // hidden input to contain project type/kind
-echo $this->Form->input('Project.kind', array('value' => 'ping', 'type' => 'hidden'));
+echo $this->Form->input('Project.kind', array('value' => Project::KIND_PING, 'type' => 'hidden'));
 
 // for project model:
 // title
@@ -47,10 +47,10 @@ echo $this->Form->input('Project.title');
 // for Project model:
 // status
 echo $this->Form->input('Project.status', array(
-    'options' => array(
-        'private' => 'Private',
-        'public' => 'Public'
-    ),
+    'options' => Project::statuses(array(
+        Project::STATUS_PRIVATE,
+        Project::STATUS_PUBLIC
+    )),
     'label' => 'Project status',
 ));
 

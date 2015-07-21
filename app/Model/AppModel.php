@@ -31,6 +31,23 @@ App::uses('Model', 'Model');
  */
 class AppModel extends Model {
 
+    public static function enum($options, $value, $default) {
+        if ($value !== null) {
+            if (is_array($value)) {
+                return array_combine($value, array_map(function ($o) use ($options) {
+                    return $options[$o];
+                }, $value));
+            }
+            else if (array_key_exists($value, $options)) {
+                return $options[$value];
+            }
+
+            return $default;
+        }
+
+        return $default;
+    }
+
     public function generateHabtmJoin($joinModel, $joinType = 'INNER') {
         // If the relation does not exist, return an empty array.
         if (!isset($this->hasAndBelongsToMany[$joinModel])) {

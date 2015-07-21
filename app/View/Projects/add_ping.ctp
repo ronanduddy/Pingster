@@ -33,7 +33,7 @@
 
             // for project model:            
             // hidden input to contain project type/kind
-            echo $this->Form->input('Project.kind', array('value' => 'ping', 'type' => 'hidden'));
+            echo $this->Form->input('Project.kind', array('value' => Project::KIND_PING, 'type' => 'hidden'));
 
             // for project model:
             // title
@@ -72,14 +72,14 @@
             if (isset($namedParams['public'])) {
                 echo $this->Form->input('Project.status', array(
                     'type' => 'hidden',
-                    'value' => 'public',
+                    'value' => Project::STATUS_PUBLIC,
                 ));
             } else {
                 echo $this->Form->input('Project.status', array(
-                    'options' => array(
-                        'private' => 'Private',
-                        'public' => 'Public'
-                    ),
+                    'options' => Project::statuses(array(
+                        Project::STATUS_PRIVATE,
+                        Project::STATUS_PUBLIC
+                    )),
                     'label' => 'Visibility',
                 ));
             }

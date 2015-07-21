@@ -17,7 +17,7 @@
             // Project.id required for model update (is hidden)
             echo $this->Form->input('Project.id');
 
-            echo $this->Form->input('Project.kind', array('value' => 'ping', 'type' => 'hidden'));
+            echo $this->Form->input('Project.kind', array('value' => Project::KIND_PING, 'type' => 'hidden'));
             echo $this->Form->input('Project.title', array(
                 'label' => 'Give your Ping a groovie name',
                 'placeholder' => 'Bebop'
@@ -41,10 +41,10 @@
             </div>
             <?php
             echo $this->Form->input('Project.status', array(
-                'options' => array(
-                    'private' => 'Private',
-                    'public' => 'Public'
-                ),
+                'options' => Project::statuses(array(
+                    Project::STATUS_PRIVATE,
+                    Project::STATUS_PUBLIC,
+                )),
                 'label' => 'Visibility',
             ));
 

@@ -46,7 +46,7 @@
 			<td><?php echo $project['title']; ?></td>
 			<td><?php echo $project['description']; ?></td>
 			<td><?php echo $project['image_url']; ?></td>
-			<td><?php echo $project['status']; ?></td>
+			<td><?php echo Project::status($project['status']); ?></td>
 			<td><?php echo $project['modified']; ?></td>
 			<td><?php echo $project['created']; ?></td>
 			<td class="actions">

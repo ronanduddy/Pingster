@@ -46,7 +46,7 @@ echo $this->Html->script('Projects');
 
             // for project model:
             // hidden input to contain project type/kind
-            echo $this->Form->input('Project.kind', array('value' => 'team_up', 'type' => 'hidden'));
+            echo $this->Form->input('Project.kind', array('value' => Project::KIND_TEAM_UP, 'type' => 'hidden'));
 
             // for project model:
             // title
@@ -85,10 +85,10 @@ echo $this->Html->script('Projects');
                 'class'=>'form-control'));
 
             echo $this->Form->input('Project.status', array(
-                'options' => array(
-                    'private' => 'Private',
-                    'public' => 'Public'
-                ),
+                'options' => Project::statuses(array(
+                    Project::STATUS_PRIVATE,
+                    Project::STATUS_PUBLIC,
+                )),
                 'label' => 'Visibility',
             ));
 

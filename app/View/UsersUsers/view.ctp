@@ -18,7 +18,7 @@
 		</dd>
 		<dt><?php echo __('Status'); ?></dt>
 		<dd>
-			<?php echo h($usersUser['UsersUser']['status']); ?>
+			<?php echo h(UsersUser::statuses($usersUser['UsersUser']['status'])); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Created'); ?></dt>

@@ -33,4 +33,30 @@ class ProjectsUser extends AppModel {
         )
     );
 
+    /**
+     * Retrieve representations of user role enum
+     *
+     * @param int
+     * @retval string
+     */
+    public static function user_roles($value = null) {
+        $user_roles = array(
+            self::USER_ROLE_INVALID => __("[invalid role]"),
+            self::USER_ROLE_OWNER => __("Owner"),
+            self::USER_ROLE_MODERATOR => __("Moderator"),
+            self::USER_ROLE_COLLABORATOR => __("Collaborator"),
+            self::USER_ROLE_MENTOR => __("Mentor"),
+            self::USER_ROLE_GUEST => __("Guest"),
+        );
+
+        return self::enum($user_roles, $value, self::USER_ROLE_INVALID);
+    }
+
+    const USER_ROLE_INVALID = 0;
+    const USER_ROLE_OWNER = 1;
+    const USER_ROLE_MODERATOR = 2;
+    const USER_ROLE_COLLABORATOR = 3;
+    const USER_ROLE_MENTOR = 4;
+    const USER_ROLE_GUEST = 5;
+
 }

@@ -12,7 +12,7 @@ echo $this->element('Admin/head', array(
     </dd>
     <dt><?php echo __('Kind'); ?></dt>
     <dd>
-        <?php echo h($project['Project']['kind']); ?>
+        <?php echo h(Project::kinds($project['Project']['kind'])); ?>
         &nbsp;
     </dd>
     <dt><?php echo __('Title'); ?></dt>
@@ -37,7 +37,7 @@ echo $this->element('Admin/head', array(
     </dd>
     <dt><?php echo __('Status'); ?></dt>
     <dd>
-        <?php echo h($project['Project']['status']); ?>
+        <?php echo h(Project::statuses($project['Project']['status'])); ?>
         &nbsp;
     </dd>
     <dt><?php echo __('Modified'); ?></dt>
@@ -150,7 +150,7 @@ echo $this->element('Admin/head', array(
                         <td><?php echo $asset['user_id']; ?></td>
                         <td><?php echo $asset['asset']; ?></td>
                         <td><?php echo $asset['asset_url']; ?></td>
-                        <td><?php echo $asset['asset_status']; ?></td>
+                        <td><?php echo Asset::statuses($asset['asset_status']); ?></td>
                         <td><?php echo $asset['created']; ?></td>
                         <td class="actions">
                             <?php echo $this->Html->link(__('View'), array('controller' => 'assets', 'action' => 'view', $asset['id'])); ?>

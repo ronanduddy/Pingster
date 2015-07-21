@@ -26,7 +26,7 @@ echo $this->element('Admin/head', array(
                     </td>
                     <td><?php echo h($asset['Asset']['asset']); ?>&nbsp;</td>
                     <td><?php echo h($asset['Asset']['asset_url']); ?>&nbsp;</td>
-                    <td><?php echo h($asset['Asset']['asset_status']); ?>&nbsp;</td>
+                    <td><?php echo h(Asset::statuses($asset['Asset']['asset_status'])); ?>&nbsp;</td>
                     <td><?php echo h($asset['Asset']['created']); ?>&nbsp;</td>
                     <td class="actions">
                         <?php echo $this->Html->link(__('View'), array('action' => 'view', $asset['Asset']['id'])); ?>

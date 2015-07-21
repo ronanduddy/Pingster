@@ -24,12 +24,12 @@ echo $this->element('Admin/head', array(
             <?php foreach ($projects as $project): ?>
                 <tr>
                     <td><?php echo h($project['Project']['id']); ?>&nbsp;</td>
-                    <td><?php echo h($project['Project']['kind']); ?>&nbsp;</td>
+                    <td><?php echo h(Project::kinds($project['Project']['kind'])); ?>&nbsp;</td>
                     <td><?php echo h($project['Project']['title']); ?>&nbsp;</td>
                     <td><?php echo h($project['Project']['description']); ?>&nbsp;</td>
                     <td><?php echo h($project['Project']['image']); ?>&nbsp;</td>
                     <td><?php echo h($project['Project']['image_url']); ?>&nbsp;</td>
-                    <td><?php echo h($project['Project']['status']); ?>&nbsp;</td>
+                    <td><?php echo h(Project::statuses($project['Project']['status'])); ?>&nbsp;</td>
                     <td><?php echo h($project['Project']['modified']); ?>&nbsp;</td>
                     <td><?php echo h($project['Project']['created']); ?>&nbsp;</td>
                     <td class="actions">

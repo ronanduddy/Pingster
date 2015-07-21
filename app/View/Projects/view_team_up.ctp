@@ -4,7 +4,7 @@
         <div class="box-header">
             <i class="fa fa-rocket"></i>
             <h3 class="box-title">
-                <?php echo sprintf('%s <small>%s %s</small>', h($project['Project']['title']), h(ucfirst($project['Project']['status'])), h(ucfirst($project['Project']['kind']))); ?>
+                <?php echo sprintf('%s <small>%s %s</small>', h($project['Project']['title']), h(Project::statuses($project['Project']['status'])), h(Project::kinds($project['Project']['kind']))); ?>
             </h3>
         </div>
         <div class="box-body">

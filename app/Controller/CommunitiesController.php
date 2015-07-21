@@ -86,7 +86,7 @@ class CommunitiesController extends AppController {
             'conditions' => array(
                 'AND' => array(
                     'Project.id' => $CommunitiesProject,
-                    'Project.status' => 'public'
+                    'Project.status' => Project::STATUS_PUBLIC
                 ),
             ),
             'limit' => 10,

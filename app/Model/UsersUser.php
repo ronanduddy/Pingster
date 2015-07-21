@@ -42,4 +42,24 @@ class UsersUser extends AppModel {
         )
     );
 
+    /**
+     * Retrieve representations of status enum (public/private)
+     *
+     * @param int
+     * @retval string
+     */
+    public static function statuses($value = null) {
+        $statuses = array(
+            self::STATUS_INVALID => __("[invalid status]"),
+            self::STATUS_PENDING => __("Pending"),
+            self::STATUS_APPROVED => __("Approved")
+        );
+
+        return self::enum($statuses, $value, self::STATUS_INVALID);
+    }
+
+    const STATUS_INVALID = 0;
+    const STATUS_PENDING = 1;
+    const STATUS_APPROVED = 2;
+
 }

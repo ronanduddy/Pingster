@@ -21,7 +21,7 @@
 		<td>
 			<?php echo $this->Html->link($usersUser['Friend']['id'], array('controller' => 'users', 'action' => 'view', $usersUser['Friend']['id'])); ?>
 		</td>
-		<td><?php echo h($usersUser['UsersUser']['status']); ?>&nbsp;</td>
+		<td><?php echo h(UsersUser::statuses($usersUser['UsersUser']['status'])); ?>&nbsp;</td>
 		<td><?php echo h($usersUser['UsersUser']['created']); ?>&nbsp;</td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('View'), array('action' => 'view', $usersUser['UsersUser']['id'])); ?>
