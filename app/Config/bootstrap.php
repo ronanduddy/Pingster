@@ -52,8 +52,8 @@ Cache::config('default', array('engine' => 'File'));
  */
 App::build(
   array(
-    'Plugin' => array(ROOT . '/Plugin/', ROOT . '/app/Plugin/'),
-    'Vendor' => array(ROOT . '/Vendor/', ROOT . '/app/Vendor/')
+    'Plugin' => array(ROOT . '/Plugin/', ROOT . '/Plugin/'),
+    'Vendor' => array(ROOT . '/Vendor/', ROOT . '/Vendor/')
   ),
   App::RESET
 );
@@ -117,6 +117,11 @@ CakeLog::config('error', array(
     'file' => 'error',
 ));
 
+Configure::write('Amazonsdk.credentials', array(
+    'key' => getenv('AWS_KEY'),
+    'secret' => getenv('AWS_SECRET'),
+    'region' => getenv('AWS_S3_REGION')
+));
 CakePlugin::load('DebugKit');
 //CakePlugin::load('Upload');
 CakePlugin::load('Amazonsdk');

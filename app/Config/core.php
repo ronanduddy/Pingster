@@ -21,7 +21,7 @@
 /**
  * Shoehorn Composer loading in
  */
-require_once dirname(__DIR__) . '/Vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/Vendor/autoload.php';
 
 /**
  * CakePHP Debug Level:
