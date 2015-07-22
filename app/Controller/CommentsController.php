@@ -69,8 +69,6 @@ class CommentsController extends AppController {
 
     public function commentOnPing() {
         $s3_bucket = Configure::read('Pingster.s3_bucket');
-        $s3_region = constant('AmazonS3::' . Configure::read('Pingster.s3_region'));
-        debug($s3_region);
 
         if ($this->request->is('post')) {
             //debug($this->request->data);exit();
@@ -97,23 +95,23 @@ class CommentsController extends AppController {
                         $file_info = $finfo->file($file_name);
                         $mime_type = substr($file_info, 0, strpos($file_info, ';'));
 
-                        $this->Amazon->S3->set_region($s3_region);
-
                         $user = $this->Auth->user();
 
                         // save to pingster/user/project/asset/image.png
                         $saveTo = sprintf('%s/%s/%s/%s', $user['id'], $this->request->data['Project']['id'], $this->Comment->Project->Asset->id, $name);
 
-                        $this->Amazon->S3->create_object(
-                                $s3_bucket, $saveTo, array(
-                            'fileUpload' => $tmp_name,
-                            'acl' => AmazonS3::ACL_PUBLIC,
-                            'meta' => array('Content-Type' => $mime_type)
+                        $result = $this->Amazon->S3->putObject(array(
+                            'Bucket' => $s3_bucket,
+                            'Key' => $saveTo,
+                            'SourceFile' => $tmp_name,
+                            'ACL' => 'public-read',
+                            'ContentType' => $mime_type
                         ));
+
+                        $this->Comment->Project->Asset->set('asset_url', $result['ObjectURL']);
                     }
 
                     // set asset.asset_url to the request_url etc.
-                    $this->Comment->Project->Asset->set('asset_url', $this->Amazon->S3->request_url);
                     $this->Comment->Project->Asset->set('asset', $name);
 
                     // update
@@ -209,7 +207,10 @@ class CommentsController extends AppController {
             // if deleted comment and corresponding asset record
             if ($this->Comment->delete() && $this->Comment->Asset->delete($assetID['Comment']['asset_id'])) {
                 // delete asset in s3 too
-                $this->Amazon->S3->delete_object($s3_bucket, $assetPath);
+                $result = $this->Amazon->S3->deleteObject(array(
+                    'Bucket' => $s3_bucket,
+                    'Key' => $assetPath
+                ));
 
                 $message = 'The comment & asset have been deleted.';
                 $success = true;

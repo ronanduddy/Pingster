@@ -187,7 +187,6 @@ class ProjectsController extends AppController {
     public function addProject($kind=Project::KIND_PING) {
         $user = $this->Auth->user();
         $s3_bucket = Configure::read('Pingster.s3_bucket');
-        $s3_region = constant('AmazonS3::' . Configure::read('Pingster.s3_region'));
 
         if ($this->request->is('post')) {
             $this->Project->create();
@@ -211,22 +210,22 @@ class ProjectsController extends AppController {
                         $file_info = $finfo->file($file_name);
                         $mime_type = substr($file_info, 0, strpos($file_info, ';'));
 
-                        $this->Amazon->S3->set_region($s3_region);
-
                         $user = $this->Auth->user();
                         // save to pingster/user/project/image.png
                         $saveTo = sprintf('%s/%s/%s', $user['id'], $this->Project->id, $name);
 
-                        $this->Amazon->S3->create_object(
-                                  $s3_bucket, $saveTo, array(
-                            'fileUpload' => $tmp_name,
-                            'acl' => AmazonS3::ACL_PUBLIC,
-                            'meta' => array('Content-Type' => $mime_type)
+                        $result = $this->Amazon->S3->putObject(array(
+                            'Bucket' => $s3_bucket,
+                            'Key' => $saveTo,
+                            'SourceFile' => $tmp_name,
+                            'ACL' => 'public-read',
+                            'ContentType' => $mime_type
                         ));
+
+                        $this->Project->set('image_url', $result['ObjectURL']);
                     }
 
                     // set project.image_url to the request_url etc.
-                    $this->Project->set('image_url', $this->Amazon->S3->request_url);
                     $this->Project->set('image', $name);
 
                     // record
@@ -350,7 +349,7 @@ class ProjectsController extends AppController {
     public function editProject($id = null, $kind = Projects::KIND_PING) {
         $user = $this->Auth->user();
         $s3_bucket = Configure::read('Pingster.s3_bucket');
-        $s3_region = constant('AmazonS3::' . Configure::read('Pingster.s3_region'));
+        $s3_region = Configure::read('Pingster.s3_region');
 
         if (!$this->Project->exists($id)) {
             throw new NotFoundException('Invalid project');
@@ -367,7 +366,10 @@ class ProjectsController extends AppController {
                 $imagePath = sprintf('%s/%s/%s', $user['id'], $project['Project']['id'], $project['Project']['image']);
 
                 // remove old image
-                $this->Amazon->S3->delete_object($s3_bucket, $imagePath);
+                $result = $this->Amazon->S3->deleteObject(array(
+                    'Bucket' => $s3_bucket,
+                    'Key' => $imagePath
+                ));
 
                 // tmp vars as request data will be nulled
                 $tmp_name = $this->request->data['Project']['image']['tmp_name'];
@@ -383,21 +385,21 @@ class ProjectsController extends AppController {
                     $file_info = $finfo->file($file_name);
                     $mime_type = substr($file_info, 0, strpos($file_info, ';'));
 
-                    $this->Amazon->S3->set_region($s3_region);
-
                     // save to pingster/user/project/image.png
                     $saveTo = sprintf('%s/%s/%s', $user['id'], $this->request->data['Project']['id'], $name);
 
-                    $this->Amazon->S3->create_object(
-                            $s3_bucket, $saveTo, array(
-                        'fileUpload' => $tmp_name,
-                        'acl' => AmazonS3::ACL_PUBLIC,
-                        'meta' => array('Content-Type' => $mime_type)
+                    $result = $this->Amazon->S3->putObject(array(
+                        'Bucket' => $s3_bucket,
+                        'Key' => $saveTo,
+                        'SourceFile' => $tmp_name,
+                        'ACL' => 'public-read',
+                        'ContentType' => $mime_type
                     ));
+
+                    $this->Project->set('image_url', $result['ObjectURL']);
                 }
 
                 // set project.image_url to the request_url etc.
-                $this->Project->set('image_url', $this->Amazon->S3->request_url);
                 $this->Project->set('image', $name);
                 $this->Project->set('id', $this->request->data['Project']['id']);
                 $this->Project->set('tags', $this->request->data['Project']['tags']);
@@ -586,14 +588,17 @@ class ProjectsController extends AppController {
             // get list of object to delete in project belonging to user
             // note this will not delete other user's assets that may be 
             // associated with the project. 
-            $S3List = $this->Amazon->S3->get_object_list($s3_bucket, array(
-                'prefix' => sprintf('%s/%s/', $project['ProjectsUser'][0]['user_id'], $id)
+            $S3List = $this->Amazon->S3->getIterator('ListObjects', array(
+                'Bucket' => $s3_bucket,
+                'Prefix' => sprintf('%s/%s/', $project['ProjectsUser'][0]['user_id'], $id)
             ));
-
 
             // delete from S3
             foreach ($S3List as $object) {
-                $this->Amazon->S3->delete_object($s3_bucket, $object);
+                $this->Amazon->S3->deleteObject(array(
+                  'Bucket' => $s3_bucket,
+                  'Key' => $object['Key']
+                ));
             }
 
             $this->Session->setFlash('The project has been deleted.', 'Flashes/success');
