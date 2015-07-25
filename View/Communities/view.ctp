@@ -22,21 +22,30 @@
             width: 25%;
         }
     }
+
+
+    .masonryItem-double{
+        width: 85%;
+    }
+
 </style>
 <div id="masonryContainer" class="container">
 
-    <div class="masonryItem">               
+    <div class="masonryItem masonryItem-double">
         <div class="box box-success">
             <div class="box-header">
                 <h3 class="box-title">
                     <?php echo h($community['Community']['name']); ?>
                 </h3>
             </div>
-            <div class="box-body">             
-                <div class="thumbnail" style="background-color: #e8535d">
-                    <?php echo $this->Html->image('pingster.png'); ?>
-                </div>
-                The Ping world awaits you...
+            <div class="box-body">
+                <?php
+                    $description = !empty($community['Community']['description']) ?
+                        $community['Community']['description'] :
+                        "The Ping world awaits you...";
+
+                    echo $description;
+                ?>
             </div>
             <div class="box-footer">
                 <div class="btn-group" >

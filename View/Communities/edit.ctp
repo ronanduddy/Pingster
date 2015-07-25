@@ -1,22 +1,25 @@
-<div class="communities form">
-<?php echo $this->Form->create('Community'); ?>
-	<fieldset>
-		<legend><?php echo __('Edit Community'); ?></legend>
-	<?php
-		echo $this->Form->input('id');
-		echo $this->Form->input('name');
-		echo $this->Form->input('Project');
-	?>
-	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
-</div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
 
-		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('Community.id')), array(), __('Are you sure you want to delete # %s?', $this->Form->value('Community.id'))); ?></li>
-		<li><?php echo $this->Html->link(__('List Communities'), array('action' => 'index')); ?></li>
-		<li><?php echo $this->Html->link(__('List Projects'), array('controller' => 'projects', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Project'), array('controller' => 'projects', 'action' => 'add')); ?> </li>
-	</ul>
+<div class="col-lg-6 col-lg-offset-3">
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title"><?php echo h(preg_replace('/(\w+)([A-Z])/U', '\\1 \\2', ucfirst($this->params['action']))); ?></h3>
+        </div>
+        <div class="box-body">
+<?php echo $this->Form->create('Community'); ?>
+
+        <div class="form-group required">
+            <label class="control-label col-lg-4" for="ProjectDescription">Description</label>
+            <div class="col-lg-8">
+            <?php
+                echo $this->Form->textarea('Community.description', array(
+                    'class' => 'form-control',
+                    'style' => 'resize: vertical;',
+                    'rows' => '5',
+                    'maxlength' => '250',
+                    'placeholder' => 'What\'s it all about?'
+                ));
+            ?>
+            </div>
+        </div>
+<?php echo $this->Form->end(__('Submit')); ?>
 </div>

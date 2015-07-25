@@ -63,7 +63,7 @@
                 </a>
                   <form class="navbar-form navbar-left" action="/Search/explore" role="search" method="get">
                     <div class="form-group">
-                      <input type="text" name="term" class="form-control" id="navbar-search-input" placeholder="Search">
+                        <input type="text" name="term" class="form-control" id="navbar-search-input" placeholder="Search">
                       <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
                     </div>
                   </form>

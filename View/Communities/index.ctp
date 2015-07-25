@@ -21,7 +21,7 @@
         .masonryItem{
             width: 25%;
         }
-    }
+    }3
 </style>
 <div id="masonryContainer" class="container">
 
@@ -33,9 +33,6 @@
                 </h3>
             </div>
             <div class="box-body">
-                <div class="thumbnail" style="background-color: #e8535d">
-                    <?php echo $this->Html->image('pingster.png'); ?>                
-                </div>
                 The Pingster Community
             </div>
             <div class="box-footer">
@@ -78,9 +75,12 @@
                 </div>
 
                 <div class="box-footer">
-                    <p style="text-align: right">
+                    <p style="text-align: right" class="btn-group">
                         <?php
                         echo $this->Html->link('View', array('controller' => 'communities', 'action' => 'view', $community['Community']['id']), array('title' => 'View this Community', 'class' => 'btn btn-primary'));
+                        if ($current_user["Group"]["name"] == "admins" || $current_user["Group"]["name"] == "mentors"){
+                            echo $this->Html->link('Edit', array('controller' => 'communities', 'action' => 'Edit', $community['Community']['id']), array('title' => 'View this Community', 'class' => 'btn btn-primary'));
+                        }
                         ?>
                     </p>
                 </div>
