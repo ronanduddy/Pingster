@@ -1,6 +1,7 @@
 <?php
 
 App::uses('AppController', 'Controller');
+App::uses('CakeEmail', 'Network/Email');
 
 class UsersController extends AppController {
 
@@ -63,7 +64,7 @@ class UsersController extends AppController {
         $assets = $this->Paginator->paginate('Assets');
         $this->set(compact('assets'));
 
-        $this->User->recursive = 0;
+        $this->User->recursive = 1;
         $this->set('user', $this->User->find('first', $options));
 
     }
@@ -80,6 +81,8 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             $this->User->create();
             if ($this->User->save($this->request->data)) {
+
+                $this->afterFilter();
                 $this->Session->setFlash('The user has been saved.', 'Flashes/success');
                 return $this->redirect(array('action' => 'index'));
             } else {
@@ -112,15 +115,21 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             $this->User->create();
 
-            // get id for pingsters group
-            $this->User->Group->recursive = -1;
-            $pingsters = $this->User->Group->findByName('pingsters', array('fields' => 'Group.id'));
+            // get id for group
 
-            // set to group id for pingster user
+            $this->User->Group->recursive = -1;
+
+            $group = $this->request->data['User']['group_id'] == "Mentor" ? "mentors" : "pingsters";
+
+            $pingsters = $this->User->Group->findByName($group, array('fields' => 'Group.id'));
+
+            // set to group id for user
             $this->request->data['User']['group_id'] = (int) $pingsters['Group']['id'];
+            $this->request->data['User']['verified_email'] = false;
 
             if ($this->User->save($this->request->data)) {
 
+                $this->generateUserEmail();
                 // if login succeeds -> direct to dashboard
                 if ($this->Auth->login()) {
                     $this->Session->setFlash('Welcome ' . h($this->request->data['User']['username']) . ', you have just been added to Pingster!', 'Flashes/success');
@@ -294,6 +303,23 @@ class UsersController extends AppController {
         }
     }
 
+    public function validateEmail(){
+
+        $passed_token = $this->request->query['token'];
+        $user = $this->Auth->user();
+        $token_base =  $user['username'].$user['email'].$user['age'];
+        if($this->validate_token($passed_token, $token_base)){
+            $this->User->findById($user["id"]);
+
+            $this->User->set(array(
+                'verified_email' => 'true',
+            ));
+            $this->User->save();
+            $this->Session->setFlash('Email Verified', 'Flashes/success');
+            return $this->redirect(array('controller' => 'users', 'action' => 'view', $this->request->data['User']['id']));
+        }
+    }
+
     public function admin_changePassword($id = null) {
         $this->changePassword($id);
     }
@@ -324,22 +350,35 @@ class UsersController extends AppController {
         parent::beforeFilter();
     }
 
+    public function generateUserEmail(){
+
+        $token_base =  $this->request->data['User']['username'].$this->request->data['User']['email'].$this->request->data['User']['age'];
+        $token = $this->encrypt_token($token_base);
+        $message = "Please verify your email by visiting <a href='" . Router::url('/', true) .
+            "Users/verifyEmail/" . $this->User->getInsertID() . "?token=".$token."'>here</a>";
+
+        $Email = new CakeEmail();
+        $Email->from(array('userverification@pingster.org' => 'Pingster Email Verification'))
+            ->to($this->request->data['User']['email'])
+            ->subject('Verify your email!')
+            ->send($message);
+    }
+
     public function isAuthorized($user) {
 
         $group = $user['Group']['name'];
-
         // is admin
         if ($group == 'admins') {
             return true;
         }
-
+        
         // if pingster
-        if ($group == 'pingsters' && in_array($this->action, array('dashboard', 'checkLoggedIn', 'logout', 'view', 'search'))) {
+        if (($group == 'pingsters' || $group == 'mentors') && in_array($this->action, array('dashboard', 'checkLoggedIn', 'logout', 'view', 'search', 'validateEmail'))) {
             return true;
         }
 
         // if pingster
-        if ($group == 'pingsters' && in_array($this->action, array('edit', 'delete'))) {
+        if (($group == 'pingsters' || $group == 'mentors') && in_array($this->action, array('edit', 'delete'))) {
 
             // get  id from url
             $userId = (int) $this->request->params['pass'][0];
@@ -363,7 +402,7 @@ class UsersController extends AppController {
             }
         } // end if
         // if pingster
-        if ($group == 'pingsters' && in_array($this->action, array('changePassword'))) {
+        if (($group == 'pingsters' || $group == 'mentors') && in_array($this->action, array('changePassword'))) {
 
             // get user id from url
             $userId = (int) $this->request->params['pass'][0];
@@ -383,4 +422,59 @@ class UsersController extends AppController {
     }
 
 // end isAuthorized
+||||||| merged common ancestors
+
+    public function admin_ACLinit() {
+        // 1 = admins
+        // 2 = mentors
+        // 3 = pingsters
+        // 4 = guests
+        // 5 = parents
+        $group = $this->User->Group;
+
+        // allow admins to everything
+        $group = $this->User->Group->findByName('admins', array('fields' => 'Group.id'));
+        $this->Acl->allow($group, 'controllers');
+
+        // allow pingsters to:
+        $group = $this->User->Group->findByName('pingsters', array('fields' => 'Group.id'));
+        $this->Acl->deny($group, 'controllers');
+
+        $this->Acl->allow($group, 'controllers/Communities/index');
+        $this->Acl->allow($group, 'controllers/Communities/view');
+
+        $this->Acl->allow($group, 'controllers/Projects/viewPing');
+        $this->Acl->allow($group, 'controllers/Projects/myPings');
+        $this->Acl->allow($group, 'controllers/Projects/addPing');
+        $this->Acl->allow($group, 'controllers/Projects/editPing');
+        $this->Acl->allow($group, 'controllers/Projects/searchPings');
+        $this->Acl->allow($group, 'controllers/Projects/delete');
+        $this->Acl->allow($group, 'controllers/Projects/community');
+        $this->Acl->allow($group, 'controllers/Projects/viewTeamUp');
+        $this->Acl->allow($group, 'controllers/Projects/myTeamUps');
+        $this->Acl->allow($group, 'controllers/Projects/addTeamUp');
+        $this->Acl->allow($group, 'controllers/Projects/editTeamUp');
+        $this->Acl->allow($group, 'controllers/Projects/searchTeamUps');
+        $this->Acl->allow($group, 'controllers/Projects/invitationResponse');
+
+        $this->Acl->allow($group, 'controllers/Users/dashboard');
+        $this->Acl->allow($group, 'controllers/Users/changePassword');
+        $this->Acl->allow($group, 'controllers/Users/checkLoggedIn');
+        $this->Acl->allow($group, 'controllers/Users/logout');
+        $this->Acl->allow($group, 'controllers/Users/register');
+        $this->Acl->allow($group, 'controllers/Users/search');
+
+        $this->Acl->allow($group, 'controllers/Search/explore');
+
+        $this->Acl->allow($group, 'controllers/Notifications/markAllRead');
+        $this->Acl->allow($group, 'controllers/Notifications/deleteAll');
+
+        $this->Acl->allow($group, 'controllers/Comments/commentOnPing');
+        $this->Acl->allow($group, 'controllers/Comments/delete');
+
+        $this->Session->setFlash('ACL initialised', 'Flashes/success');
+        $this->redirect(array('controller' => 'Users', 'action' => 'dashboard', 'admin' => false));
+        return true;
+    }
+
 }

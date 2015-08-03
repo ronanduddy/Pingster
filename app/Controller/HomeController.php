@@ -27,7 +27,12 @@ class HomeController extends AppController {
         // for registration
         $this->loadModel('User');
         $groups = $this->User->Group->find('list');
+
+        $this->loadModel('Activity');
+        $stream = $this->Activity->get();
+
         $this->set(compact('groups'));
+        $this->set($stream);
     }
 
     // anyone can view the home/index page

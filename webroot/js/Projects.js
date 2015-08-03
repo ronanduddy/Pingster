@@ -1,7 +1,7 @@
 $(function() {
 
     if (typeof members == 'undefined') {
-        var members = {};
+        members = {};
     }
 
     function split( val ) {

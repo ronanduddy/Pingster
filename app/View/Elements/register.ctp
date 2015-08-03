@@ -31,11 +31,17 @@ echo $this->Form->input('User.username', array(
 ));
 
 // for user model:
-// user group_id 
-echo $this->Form->hidden('User.group_id', array(
-    'value' => 8, // for pingster
-));
+// user group_id
 
+?>
+<div class="form-group required"><label for="UserGroupId" class="control-label col-lg-4">Group</label>
+<div class="col-lg-8">
+<select name="data[User][group_id]" class="form-control" id="UserGroupId" required="required">
+<option value="Pingster">Pingster</option>
+<option value="Mentor">Mentor</option>
+</select></div></div>
+
+<?php
 // for user model:
 // password
 echo $this->Form->input('User.password', array(
@@ -52,10 +58,27 @@ echo $this->Form->input('User.password_confirm', array(
     'label' => 'Confirm password',
 ));
 
+?>
+
+<div class="form-group-required">
+    <label for="tos" class="control-label col-lg-4">
+        Agree With Our <a href="/privacypolicy" target="_blank">Privacy Policy</a> And <a href="/termsandconditions" target="_blank">Terms And Conditions</a>?
+    </label>
+    <div class="col-lg-8">
+        <input type="hidden" name="data[User][tos]" id="tos_" value="0">
+        <div class="icheckbox_minimal" aria-checked="false" aria-disabled="false" style="position: relative;">
+            <input type="checkbox" name="data[User][tos]" class="form-control" value="1" id="tos" style="opacity: 0;">
+        </div>
+    </div>
+</div>
+
+<?php
 // submit
 echo $this->Form->submit('Sign me up!', array(
     'class' => 'btn btn-lg btn-primary btn-block'
 ));
+
+
 
 // end
 echo $this->Form->end();

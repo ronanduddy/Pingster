@@ -104,9 +104,13 @@ class AppController extends Controller {
         $this->set('Notifications', $notifications);
     }
 
-    public function beforeController() {
-        echo "test";
-    }
+    public function afterFilter() {
+
+        $this->recordActivity();
+      }
+      
+
+
 
     public function isAuthorized($user) {
         // default deny all unless otherwise specified in ACL
@@ -117,6 +121,105 @@ class AppController extends Controller {
         }
 
         return false;
+    }
+
+    public function recordActivity() {
+
+        $result = $this->response->statusCode();
+        $user = $this->Auth->user();
+
+        if($result >= 200 &&
+            $result < 300 &&
+            isset($user['id']) &&
+            !($this->name == "CakeError")
+        )
+        {
+
+            $activity = array();
+            $activity['action'] = $this->request->params['action'];
+
+            if($this->request->is('get')){
+
+                $activity['method'] = "View";
+
+                //If we're viewing a non page like editPing break out
+                if(substr($activity['action'], 0, 4) != 'view'){
+
+                    return true;
+                }
+            }
+            else if($this->request->is('post')){
+
+                $activity['method'] = "Create";
+            }
+
+            else if($this->request->is('put')){
+
+                $activity['method'] = "Update";
+            }
+
+            $activity['model'] = $this->modelClass;
+            $activity['user_id'] = $user['id'];
+            $activity['username'] = $user['username'];
+
+            $activity['action'] = $this->request->params['action'];
+
+            if(isset($this->request->params['pass'][0])){
+
+                $activity['entity_id'] = $this->request->params['pass'][0];
+            }
+            else if(isset($this->Comment->id)){
+                $activity['entity_id'] = $this->Comment->id;
+            }
+
+            if(isset($activity['entity_id'])){
+
+                $activity['time'] = date('Y-m-d H:i:s');
+                $this->loadModel('Activity');
+                $this->Activity->store($activity);
+            }
+
+            $activity['time'] = date('Y-m-d H:i:s');
+            $this->loadModel('Activity');
+            $this->Activity->store($activity);
+        }
+    }
+
+
+    public function encrypt_token($string){
+
+        $key = base64_encode("mU1xoJ05VJJ8o1YRYF7yta3GuMpfcsqM");
+        $ivSize = openssl_cipher_iv_length("aes-256-cbc");
+        $iv = openssl_random_pseudo_bytes($ivSize);
+
+        $ciphertext = openssl_encrypt(
+            $string,
+            "aes-256-cbc",
+            $key,
+            OPENSSL_RAW_DATA,
+            $iv
+        );
+
+        return base64_encode($iv . $ciphertext);
+
+    }
+
+    public function validate_token($token, $string){
+
+        $key = base64_encode("mU1xoJ05VJJ8o1YRYF7yta3GuMpfcsqM");
+        $token = base64_decode($token, true);
+
+        $ivSize = openssl_cipher_iv_length("aes-256-cbc");
+        $iv = mb_substr($token, 0, $ivSize, '8bit');
+        $ciphertext = mb_substr($token, $ivSize, null, '8bit');
+
+        return $string == openssl_decrypt(
+            $ciphertext,
+            "aes-256-cbc",
+            $key,
+            OPENSSL_RAW_DATA,
+            $iv
+        );
     }
 
 }

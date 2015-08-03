@@ -141,9 +141,9 @@ class Project extends AppModel {
     public $hasMany = array(
         'Activity' => array(
             'className' => 'Activity',
-            'foreignKey' => 'project_id',
+            'foreignKey' => 'entity_id',
             'dependent' => false,
-            'conditions' => '',
+            'conditions' => array("Activity.model" => "Project"),
             'fields' => '',
             'order' => '',
             'limit' => '',
@@ -244,5 +244,15 @@ class Project extends AppModel {
             'finderQuery' => '',
         )
     );
+
+    public function getViews($id=null){
+
+        $id = $id == null ? $this->id : $id;
+        return $this->Activity->find('count', array(
+            'conditions' => array('Activity.entity_id' => $id,
+                'Activity.method' => 'View',
+                'Activity.model' => 'Project')
+        ));
+    }
 
 }

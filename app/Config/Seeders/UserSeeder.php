@@ -75,6 +75,7 @@ class UserSeeder
   {
     $this->init_admins();
     $this->init_pingsters();
+    $this->init_mentors();
   }
 
   /**
@@ -149,6 +150,57 @@ class UserSeeder
     $this->Acl->allow($group, 'controllers/Users/search');
 
     $this->Acl->allow($group, 'controllers/Search/explore');
+
+    $this->Acl->allow($group, 'controllers/Notifications/markAllRead');
+    $this->Acl->allow($group, 'controllers/Notifications/deleteAll');
+
+    $this->Acl->allow($group, 'controllers/Comments/commentOnPing');
+    $this->Acl->allow($group, 'controllers/Comments/delete');
+  }
+
+  private function init_mentors() {
+    $groupRecord = $this->SeedShell->firstOrCreate(
+      $this->Group,
+      array(
+        'name' => 'mentors'
+      )
+    );
+
+    $group = $this->Group->findByName('mentors', array('fields' => 'Group.id'));
+
+    // allow mentors to:
+    $this->Acl->deny($group, 'controllers');
+
+    $this->Acl->allow($group, 'controllers/Communities/index');
+    $this->Acl->allow($group, 'controllers/Communities/view');
+    $this->Acl->allow($group, 'controllers/Communities/edit');
+
+    $this->Acl->allow($group, 'controllers/Projects/viewPing');
+    $this->Acl->allow($group, 'controllers/Projects/myPings');
+    $this->Acl->allow($group, 'controllers/Projects/addPing');
+    $this->Acl->allow($group, 'controllers/Projects/editPing');
+    $this->Acl->allow($group, 'controllers/Projects/searchPings');
+    $this->Acl->allow($group, 'controllers/Projects/delete');
+    $this->Acl->allow($group, 'controllers/Projects/community');
+    $this->Acl->allow($group, 'controllers/Projects/viewTeamUp');
+    $this->Acl->allow($group, 'controllers/Projects/myTeamUps');
+    $this->Acl->allow($group, 'controllers/Projects/addTeamUp');
+    $this->Acl->allow($group, 'controllers/Projects/editTeamUp');
+    $this->Acl->allow($group, 'controllers/Projects/searchTeamUps');
+    $this->Acl->allow($group, 'controllers/Projects/invitationResponse');
+
+    $this->Acl->allow($group, 'controllers/Users/dashboard');
+    $this->Acl->allow($group, 'controllers/Users/changePassword');
+    $this->Acl->allow($group, 'controllers/Users/checkLoggedIn');
+    $this->Acl->allow($group, 'controllers/Users/logout');
+    $this->Acl->allow($group, 'controllers/Users/register');
+    $this->Acl->allow($group, 'controllers/Users/search');
+
+    $this->Acl->allow($group, 'controllers/UsersFollowers/follow');
+
+    $this->Acl->allow($group, 'controllers/Search/explore');
+
+    $this->Acl->allow($group, 'controllers/Activities/getAll');
 
     $this->Acl->allow($group, 'controllers/Notifications/markAllRead');
     $this->Acl->allow($group, 'controllers/Notifications/deleteAll');

@@ -138,7 +138,14 @@ class User extends AppModel {
                 'rule' => array('numeric'),
             ),
         ),
-    );
+
+        'tos' => array(
+            'notEmpty' => array(
+                'rule'     => array('comparison', '!=', 0),
+                'required' => true,
+                'message'  => 'Please check this box if you want to proceed.'
+            ))
+                    );
 
     ///////////////////////////////////////////////////////////////////////////////////
     // custom rules from 
@@ -315,6 +322,14 @@ class User extends AppModel {
             'className' => 'Notification',
             'foreignKey' => 'user_id',
         ),
+        'Follower' => array(
+            'className' => 'UsersFollower',
+            'foreignKey' => 'user_id',
+        ),
+        'Follow' => array(
+            'className' => 'UsersFollower',
+            'foreignKey' => 'follower_id',
+        )
     );
 
 
@@ -350,7 +365,7 @@ class User extends AppModel {
             'offset' => '',
             'finderQuery' => '',
             'with' => 'UsersUser'
-        )
+        ),
     );
     public $belongsTo = array(
         'Group' => array(
